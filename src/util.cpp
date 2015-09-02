@@ -5,7 +5,7 @@
 #include <deque>
 #include <vector>
 
-#include <boost/unordered_map.hpp> 
+#include <boost/unordered_map.hpp>
 #include <boost/algorithm/string.hpp>
 
 #include "maybe_omp.h"
@@ -36,7 +36,7 @@ void splitBySpace(const std::string &line, std::vector<std::string> &items)
     boost::split(items, copy, boost::is_any_of(" \t"), boost::token_compress_on);
 }
 
-void readWeightsFile(ifstream &TRAININ, vector<float> &weights) {
+void readWeightsFile(istream &TRAININ, vector<float> &weights) {
   string line;
   while (getline(TRAININ, line) && line != "")
   {
@@ -51,7 +51,7 @@ void readWeightsFile(ifstream &TRAININ, vector<float> &weights) {
   }
 }
 
-void readWordsFile(ifstream &TRAININ, vector<string> &word_list)
+void readWordsFile(istream &TRAININ, vector<string> &word_list)
 {
   string line;
   while (getline(TRAININ, line) && line != "")
@@ -71,8 +71,7 @@ void readWordsFile(const string &file, vector<string> &word_list)
 {
   cerr << "Reading word list from: " << file<< endl;
 
-  ifstream TRAININ;
-  TRAININ.open(file.c_str());
+  ifstream TRAININ(file.c_str());
   if (! TRAININ)
   {
     cerr << "Error: can't read word list from file " << file<< endl;
@@ -80,7 +79,6 @@ void readWordsFile(const string &file, vector<string> &word_list)
   }
 
   readWordsFile(TRAININ, word_list);
-  TRAININ.close();
 }
 
 void writeWordsFile(const vector<string> &words, ofstream &file)
@@ -93,15 +91,13 @@ void writeWordsFile(const vector<string> &words, ofstream &file)
 
 void writeWordsFile(const vector<string> &words, const string &filename)
 {
-    ofstream OUT;
-    OUT.open(filename.c_str());
+    ofstream OUT(filename.c_str());
     if (! OUT)
     {
       cerr << "Error: can't write to file " << filename << endl;
       exit(-1);
     }
     writeWordsFile(words, OUT);
-    OUT.close();
 }
 
 
@@ -144,7 +140,6 @@ void readDataFile(const string &filename, int &ngram_size, vector<int> &data, in
       cerr << n_lines/minibatch_size << "...";
   }
   cerr << "done." << endl;
-  DATAIN.close();
 }
 
 double logadd(double x, double y)

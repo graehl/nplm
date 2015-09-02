@@ -23,7 +23,7 @@ public:
     Matrix<double,Dynamic,Dynamic,Eigen::RowMajor> output_embedding_matrix,
       input_embedding_matrix,
       input_and_output_embedding_matrix;
-    
+
     activation_function_type activation_function;
     int ngram_size, input_vocab_size, output_vocab_size, input_embedding_dimension, num_hidden, output_embedding_dimension;
     bool premultiplied;
@@ -34,7 +34,7 @@ public:
         int input_embedding_dimension,
         int num_hidden,
         int output_embedding_dimension,
-        bool share_embeddings) 
+        bool share_embeddings)
     {
         if (share_embeddings){
           input_and_output_embedding_matrix = Matrix<double,Dynamic,Dynamic,Eigen::RowMajor>();
@@ -54,7 +54,7 @@ public:
             num_hidden,
             output_embedding_dimension);
     }
-    model() : ngram_size(1), 
+    model() : ngram_size(1),
             premultiplied(false),
             activation_function(Rectifier),
             output_embedding_matrix(Matrix<double,Dynamic,Dynamic,Eigen::RowMajor>()),
@@ -95,12 +95,14 @@ public:
     void read(const std::string &filename);
     void read(const std::string &filename, std::vector<std::string> &words);
     void read(const std::string &filename, std::vector<std::string> &input_words, std::vector<std::string> &output_words);
+    void read(std::istream &file);
+    void read(std::istream &file, std::vector<std::string> &input_words, std::vector<std::string> &output_words);
     void write(const std::string &filename);
     void write(const std::string &filename, const std::vector<std::string> &words);
     void write(const std::string &filename, const std::vector<std::string> &input_words, const std::vector<std::string> &output_words);
 
  private:
-    void readConfig(std::ifstream &config_file);
+    void readConfig(std::istream &config_file);
     void readConfig(const std::string &filename);
     void write(const std::string &filename, const std::vector<std::string> *input_pwords, const std::vector<std::string> *output_pwords);
 };

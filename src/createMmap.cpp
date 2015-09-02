@@ -37,7 +37,6 @@ data_size_t getNumLines(const string &filename) {
     }
     ++lines;
   }
-  training.close();
   return lines;
 }
 
@@ -47,7 +46,6 @@ int getNgramSize(const string &filename) {
   std::getline(training, line);
   std::vector<std::string> ngram;
   splitBySpace(line, ngram);
-  training.close();
   return ngram.size();
 }
 
@@ -93,7 +91,7 @@ void writeMmap(const string &filename_input,
 
   training.close();
   ip::managed_mapped_file::shrink_to_fit(filename_output.c_str());
- 
+
 }
 
 

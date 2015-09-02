@@ -75,9 +75,9 @@ class Linear_layer
     //b_velocity.resize(rows);
   }
 
-  void read_weights(std::ifstream &U_file) { readMatrix(U_file, U); }
+  void read_weights(std::istream &U_file) { readMatrix(U_file, U); }
   void write_weights(std::ofstream &U_file) { writeMatrix(U, U_file); }
-  void read_biases(std::ifstream &b_file) { readMatrix(b_file, b); }
+  void read_biases(std::istream &b_file) { readMatrix(b_file, b); }
   void write_biases(std::ofstream &b_file) { writeMatrix(b, b_file); }
 
 
@@ -313,9 +313,9 @@ class Output_word_embeddings
   void set_W(Matrix<double,Dynamic,Dynamic,Eigen::RowMajor> *input_W) {
     W = input_W;
   }
-  void read_weights(std::ifstream &W_file) { readMatrix(W_file, *W); }
+  void read_weights(std::istream &W_file) { readMatrix(W_file, *W); }
   void write_weights(std::ofstream &W_file) { writeMatrix(*W, W_file); }
-  void read_biases(std::ifstream &b_file) { readMatrix(b_file, b); }
+  void read_biases(std::istream &b_file) { readMatrix(b_file, b); }
   void write_biases(std::ofstream &b_file) { writeMatrix(b, b_file); }
 
   template <typename Engine>
@@ -751,7 +751,7 @@ class Input_word_embeddings
     W->setZero(rows, cols);
   }
 
-  void read(std::ifstream &W_file) { readMatrix(W_file, *W); }
+  void read(std::istream &W_file) { readMatrix(W_file, *W); }
   void write(std::ofstream &W_file) { writeMatrix(*W, W_file); }
 
   template <typename Engine>

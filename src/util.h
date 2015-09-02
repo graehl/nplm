@@ -37,13 +37,13 @@ namespace nplm
 {
 
 void splitBySpace(const std::string &line, std::vector<std::string> &items);
-void readWordsFile(std::ifstream &TRAININ, std::vector<std::string> &word_list);
+void readWordsFile(std::istream &TRAININ, std::vector<std::string> &word_list);
 void readWordsFile(const std::string &file, std::vector<std::string> &word_list);
 void writeWordsFile(const std::vector<std::string> &words, std::ofstream &file);
 void writeWordsFile(const std::vector<std::string> &words, const std::string &filename);
 void readDataFile(const std::string &filename, int &ngram_size, std::vector<int> &data, int minibatch_size=0);
 void readUnigramProbs(const std::string &unigram_probs_file, std::vector<double> &unigram_probs);
-void readWeightsFile(std::ifstream &TRAININ, std::vector<float> &weights);
+void readWeightsFile(std::istream &TRAININ, std::vector<float> &weights);
 //template <typename T> readSentFile(const std::string &file, T &sentences);
 
 
@@ -52,8 +52,7 @@ void readSentFile(const std::string &file, T &sentences)
 {
   std::cerr << "Reading sentences from: " << file << std::endl;
 
-  std::ifstream TRAININ;
-  TRAININ.open(file.c_str());
+  std::ifstream TRAININ(file.c_str());
   if (! TRAININ)
   {
     std::cerr << "Error: can't read from file " << file<< std::endl;
@@ -67,8 +66,6 @@ void readSentFile(const std::string &file, T &sentences)
     splitBySpace(line, words);
     sentences.push_back(words);
   }
-
-  TRAININ.close();
 }
 
 inline void intgerize(std::vector<std::string> &ngram,std::vector<int> &int_ngram){
@@ -144,7 +141,7 @@ void initBias(boost::random::mt19937 &engine,
 
 
 template <typename Derived>
-void readMatrix(std::ifstream &TRAININ, Eigen::MatrixBase<Derived> &param_const)
+void readMatrix(std::istream &TRAININ, Eigen::MatrixBase<Derived> &param_const)
 {
   UNCONST(Derived, param_const, param);
 
@@ -205,16 +202,15 @@ void writeMatrix(const Eigen::MatrixBase<Derived> &param, const std::string &fil
 {
   std::cerr << "Writing parameters to " << filename << std::endl;
 
-  std::ofstream OUT;
+  std::ofstream OUT(filename.c_str());
   OUT.precision(16);
-  OUT.open(filename.c_str());
+
   if (! OUT)
   {
     std::cerr << "Error: can't write to file " << filename<< std::endl;
     exit(-1);
   }
   writeMatrix(param, OUT);
-  OUT.close();
 }
 
 template <typename Derived>
