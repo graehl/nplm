@@ -50,12 +50,12 @@ void readWeightsFile(std::istream &TRAININ, std::vector<float> &weights);
 template <typename T>
 void readSentFile(const std::string &file, T &sentences)
 {
-  std::cerr << "Reading sentences from: " << file << std::endl;
+  std::cerr << "Reading sentences from: " << file << '\n';
 
   std::ifstream TRAININ(file.c_str());
   if (! TRAININ)
   {
-    std::cerr << "Error: can't read from file " << file<< std::endl;
+    std::cerr << "Error: can't read from file " << file<< '\n';
     exit(-1);
   }
 
@@ -185,12 +185,12 @@ template <typename Derived>
 void readMatrix(const std::string &param_file, const Eigen::MatrixBase<Derived> &param_const)
 {
   UNCONST(Derived, param_const, param);
-  std::cerr << "Reading data from file: " << param_file << std::endl;
+  std::cerr << "Reading data from file: " << param_file << '\n';
 
   std::ifstream TRAININ(param_file.c_str());
   if (!TRAININ)
   {
-    std::cerr << "Error: can't read training data from file " << param_file << std::endl;
+    std::cerr << "Error: can't read training data from file " << param_file << '\n';
     exit(-1);
   }
   readMatrix(TRAININ, param);
@@ -200,14 +200,14 @@ void readMatrix(const std::string &param_file, const Eigen::MatrixBase<Derived> 
 template <typename Derived>
 void writeMatrix(const Eigen::MatrixBase<Derived> &param, const std::string &filename)
 {
-  std::cerr << "Writing parameters to " << filename << std::endl;
+  std::cerr << "Writing parameters to " << filename << '\n';
 
   std::ofstream OUT(filename.c_str());
   OUT.precision(16);
 
   if (! OUT)
   {
-    std::cerr << "Error: can't write to file " << filename<< std::endl;
+    std::cerr << "Error: can't write to file " << filename<< '\n';
     exit(-1);
   }
   writeMatrix(param, OUT);
@@ -224,7 +224,7 @@ void writeMatrix(const Eigen::MatrixBase<Derived> &param, std::ofstream &OUT)
       OUT<<param(row,col)<<"\t";
     }
     //dont want an extra tab at the end
-    OUT<<param(row,col)<<std::endl;
+    OUT<<param(row,col)<<'\n';
   }
 }
 

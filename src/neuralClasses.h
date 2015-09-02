@@ -69,8 +69,8 @@ class Linear_layer
     //U_running_gradient.setZero(rows, cols);
     //U_running_parameter_updates.setZero(rows, cols);
     //U_velocity.setZero(rows, cols);
-    b.resize(rows);
-    b_gradient.setZero(rows);
+    b.setZero(rows);
+    //b_gradient.setZero(rows);
     //b_running_gradient.resize(rows);
     //b_velocity.resize(rows);
   }
@@ -229,7 +229,7 @@ class Linear_layer
                                double conditioning_constant,
                                double decay)
   {
-    //cerr<<"decay is "<<decay<<" and conditioning constant is "<<conditioning_constant<<endl;
+    //cerr<<"decay is "<<decay<<" and conditioning constant is "<<conditioning_constant<<'\n';
     U_gradient.noalias() = bProp_input*fProp_input.transpose();
 
     Array<double,Dynamic,1> b_current_parameter_update;
@@ -246,17 +246,17 @@ class Linear_layer
 
     // ignore momentum?
 #pragma omp parallel for
-    //cerr<<"U gradient is "<<U_gradient<<endl;
+    //cerr<<"U gradient is "<<U_gradient<<'\n';
     for (int col=0; col<U.cols(); col++) {
       Array<double,Dynamic,1> U_current_parameter_update;
       U_running_gradient.col(col) = decay*U_running_gradient.col(col) +
           (1-decay)*U_gradient.col(col).array().square().matrix();
-      //cerr<<"U running gradient is "<<U_running_gradient.col(col)<<endl;
+      //cerr<<"U running gradient is "<<U_running_gradient.col(col)<<'\n';
       //getchar();
       U_current_parameter_update = ((U_running_parameter_update.col(col).array()+conditioning_constant).sqrt()/
                                     (U_running_gradient.col(col).array()+conditioning_constant).sqrt()) *
           U_gradient.col(col).array();
-      //cerr<<"U current parameter update is "<<U_current_parameter_update<<endl;
+      //cerr<<"U current parameter update is "<<U_current_parameter_update<<'\n';
       //getchar();
       //update the running parameter update
       U_running_parameter_update.col(col) = decay*U_running_parameter_update.col(col) +
@@ -529,7 +529,7 @@ class Output_word_embeddings
                        const MatrixBase<DerivedGOutV> &weights,
                        double learning_rate, double momentum) //not sure if we want to use momentum here
   {
-    //cerr<<"in gradient"<<endl;
+    //cerr<<"in gradient\n";
     USCMatrix<double> gradient_output(W->rows(), samples, weights);
     uscgemm(learning_rate,
             gradient_output,
@@ -578,7 +578,7 @@ class Output_word_embeddings
     b_gradient(update_item) = 0.;
     }
     */
-    //cerr<<"Finished gradient"<<endl;
+    //cerr<<"Finished gradient\n";
   }
 
   template <typename DerivedIn, typename DerivedGOutI, typename DerivedGOutV>
@@ -638,7 +638,7 @@ class Output_word_embeddings
                                double conditioning_constant,
                                double decay) //not sure if we want to use momentum here
   {
-    //cerr<<"decay is "<<decay<<" and constant is "<<conditioning_constant<<endl;
+    //cerr<<"decay is "<<decay<<" and constant is "<<conditioning_constant<<'\n';
     //W_gradient.setZero(W->rows(), W->cols());
     //b_gradient.setZero(b.size());
 
@@ -674,10 +674,10 @@ class Output_word_embeddings
           (1.-decay)*W_gradient.row(update_item).array().square().matrix();
       b_running_gradient(update_item) = decay*b_running_gradient(update_item)+
           (1.-decay)*b_gradient(update_item)*b_gradient(update_item);
-      //cerr<<"Output: W gradient is "<<W_gradient.row(update_item)<<endl;
+      //cerr<<"Output: W gradient is "<<W_gradient.row(update_item)<<'\n';
       //getchar();
 
-      //cerr<<"Output: W running gradient is "<<W_running_gradient.row(update_item)<<endl;
+      //cerr<<"Output: W running gradient is "<<W_running_gradient.row(update_item)<<'\n';
       //getchar();
       W_current_parameter_update = ((W_running_parameter_update.row(update_item).array()+conditioning_constant).sqrt()/
                                     (W_running_gradient.row(update_item).array()+conditioning_constant).sqrt())*
@@ -685,16 +685,16 @@ class Output_word_embeddings
       b_current_parameter_update = (sqrt(b_running_parameter_update(update_item)+conditioning_constant)/
                                     sqrt(b_running_gradient(update_item)+conditioning_constant))*
           b_gradient(update_item);
-      //cerr<<"Output: W current parameter update is "<<W_current_parameter_update<<endl;
+      //cerr<<"Output: W current parameter update is "<<W_current_parameter_update<<'\n';
       //getchar();
-      //cerr<<"Output: W running parameter update before is "<<W_running_parameter_update.row(update_item)<<endl;
+      //cerr<<"Output: W running parameter update before is "<<W_running_parameter_update.row(update_item)<<'\n';
       //getchar();
-      //cerr<<"the second term is "<<(1.-decay)*W_current_parameter_update.square().matrix()<<endl;
+      //cerr<<"the second term is "<<(1.-decay)*W_current_parameter_update.square().matrix()<<'\n';
       W_running_parameter_update.row(update_item) = decay*W_running_parameter_update.row(update_item)+
           (1.-decay)*(W_current_parameter_update.square().matrix());
       b_running_parameter_update(update_item) = decay*b_running_parameter_update(update_item)+
           (1.-decay)*b_current_parameter_update*b_current_parameter_update;
-      //cerr<<"Output: W running parameter update is "<<W_running_parameter_update.row(update_item)<<endl;
+      //cerr<<"Output: W running parameter update is "<<W_running_parameter_update.row(update_item)<<'\n';
       //getchar();
       W->row(update_item) += learning_rate*W_current_parameter_update.matrix();
       b(update_item) += learning_rate*b_current_parameter_update;
@@ -1006,13 +1006,13 @@ class Input_word_embeddings
                                     (W_running_gradient.row(update_item).array()+conditioning_constant).sqrt())*
           W_gradient.row(update_item).array();
 
-      //cerr<<"Input: W current parameter update is "<<W_current_parameter_update<<endl;
+      //cerr<<"Input: W current parameter update is "<<W_current_parameter_update<<'\n';
       //getchar();
       W_running_parameter_update.row(update_item) = decay*W_running_parameter_update.row(update_item)+
           (1.-decay)*W_current_parameter_update.square().matrix();
 
       W->row(update_item) += learning_rate*W_current_parameter_update.matrix();
-      //cerr<<"Input: After update, W is  "<<W->row(update_item)<<endl;
+      //cerr<<"Input: After update, W is  "<<W->row(update_item)<<'\n';
       //getchar();
       W_gradient.row(update_item).setZero();
     }

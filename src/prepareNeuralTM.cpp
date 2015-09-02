@@ -19,7 +19,7 @@ void writeNgrams(const vector<vector<string> > &data, int source_context_size, i
     ofstream file(filename.c_str());
     if (!file)
     {
-	cerr << "error: could not open " << filename << endl;
+	cerr << "error: could not open " << filename << '\n';
 	exit(1);
     }
 
@@ -44,7 +44,7 @@ void writeNgrams(const vector<vector<string> > &data, int source_context_size, i
 	}
 	for (int k=0; k<nums.size(); k++)
 	  file << nums[k] << " ";
-	file << endl;
+	file << '\n';
     }
     file.close();
 }
@@ -102,36 +102,36 @@ int main(int argc, char *argv[])
     // - if --vocab_size is set, it is an error if the vocab file has a different number of lines
     // - if --numberize 0 is set and --use_vocab f is not set, then the output model file will not have a vocabulary, and a warning should be printed.
     if ((input_words_file == "") && (input_vocab_size == -1)) {
-        cerr << "Error: either --input_words_file or --input_vocab_size is required." << endl;
+        cerr << "Error: either --input_words_file or --input_vocab_size is required.\n";
         exit(1);
     }
     if ((output_words_file == "") && (output_vocab_size == -1)) {
-        cerr << "Error: either --output_words_file or --output_vocab_size is required." << endl;
+        cerr << "Error: either --output_words_file or --output_vocab_size is required.\n";
         exit(1);
     }
 
-    cerr << "Command line: " << endl;
-    cerr << boost::algorithm::join(vector<string>(argv, argv+argc), " ") << endl;
+    cerr << "Command line: \n";
+    cerr << boost::algorithm::join(vector<string>(argv, argv+argc), " ") << '\n';
 	
 	const string sep(" Value: ");
-	cerr << arg_train_text.getDescription() << sep << arg_train_text.getValue() << endl;
-	cerr << arg_train_file.getDescription() << sep << arg_train_file.getValue() << endl;
-	cerr << arg_validation_text.getDescription() << sep << arg_validation_text.getValue() << endl;
-	cerr << arg_validation_file.getDescription() << sep << arg_validation_file.getValue() << endl;
-	cerr << arg_validation_size.getDescription() << sep << arg_validation_size.getValue() << endl;
-	cerr << arg_write_input_words_file.getDescription() << sep << arg_write_input_words_file.getValue() << endl;
-	cerr << arg_write_output_words_file.getDescription() << sep << arg_write_output_words_file.getValue() << endl;
-	cerr << arg_source_context_size.getDescription() << sep << arg_source_context_size.getValue() << endl;
-	cerr << arg_target_context_size.getDescription() << sep << arg_target_context_size.getValue() << endl;
-	cerr << arg_input_vocab_size.getDescription() << sep << arg_input_vocab_size.getValue() << endl;
-	cerr << arg_output_vocab_size.getDescription() << sep << arg_output_vocab_size.getValue() << endl;
-	cerr << arg_input_words_file.getDescription() << sep << arg_input_words_file.getValue() << endl;
-	cerr << arg_output_words_file.getDescription() << sep << arg_output_words_file.getValue() << endl;
-	cerr << arg_numberize.getDescription() << sep << arg_numberize.getValue() << endl;
+	cerr << arg_train_text.getDescription() << sep << arg_train_text.getValue() << '\n';
+	cerr << arg_train_file.getDescription() << sep << arg_train_file.getValue() << '\n';
+	cerr << arg_validation_text.getDescription() << sep << arg_validation_text.getValue() << '\n';
+	cerr << arg_validation_file.getDescription() << sep << arg_validation_file.getValue() << '\n';
+	cerr << arg_validation_size.getDescription() << sep << arg_validation_size.getValue() << '\n';
+	cerr << arg_write_input_words_file.getDescription() << sep << arg_write_input_words_file.getValue() << '\n';
+	cerr << arg_write_output_words_file.getDescription() << sep << arg_write_output_words_file.getValue() << '\n';
+	cerr << arg_source_context_size.getDescription() << sep << arg_source_context_size.getValue() << '\n';
+	cerr << arg_target_context_size.getDescription() << sep << arg_target_context_size.getValue() << '\n';
+	cerr << arg_input_vocab_size.getDescription() << sep << arg_input_vocab_size.getValue() << '\n';
+	cerr << arg_output_vocab_size.getDescription() << sep << arg_output_vocab_size.getValue() << '\n';
+	cerr << arg_input_words_file.getDescription() << sep << arg_input_words_file.getValue() << '\n';
+	cerr << arg_output_words_file.getDescription() << sep << arg_output_words_file.getValue() << '\n';
+	cerr << arg_numberize.getDescription() << sep << arg_numberize.getValue() << '\n';
     }
     catch (TCLAP::ArgException &e)
     {
-      cerr << "error: " << e.error() <<  " for arg " << e.argId() << endl;
+      cerr << "error: " << e.error() <<  " for arg " << e.argId() << '\n';
       exit(1);
     }
 
@@ -149,7 +149,7 @@ int main(int argc, char *argv[])
     {
         if (validation_size > train_data.size())
 	{
-	    cerr << "error: requested validation size is greater than training data size" << endl;
+	    cerr << "error: requested validation size is greater than training data size\n";
 	    exit(1);
 	}
 	validation_data.insert(validation_data.end(), train_data.end() - validation_size, train_data.end());
@@ -175,7 +175,7 @@ int main(int argc, char *argv[])
         // was input_vocab_size set? if so, verify that it does not conflict with size of vocabulary read from file
         if (input_vocab_size > 0) {
             if (input_vocab.size() != input_vocab_size) {
-                cerr << "Error: size of input_vocabulary file " << input_vocab.size() << " != --input_vocab_size " << input_vocab_size << endl;
+                cerr << "Error: size of input_vocabulary file " << input_vocab.size() << " != --input_vocab_size " << input_vocab_size << '\n';
             }
         }
         // else, set it to the size of vocabulary read from file
@@ -195,7 +195,7 @@ int main(int argc, char *argv[])
 
         input_vocab.insert_most_frequent(count, input_vocab_size);
         if (input_vocab.size() < input_vocab_size) {
-            cerr << "warning: fewer than " << input_vocab_size << " types in training data; the unknown word will not be learned" << endl;
+            cerr << "warning: fewer than " << input_vocab_size << " types in training data; the unknown word will not be learned\n";
         }
     }
 
@@ -214,7 +214,7 @@ int main(int argc, char *argv[])
         // was output_vocab_size set? if so, verify that it does not conflict with size of vocabulary read from file
         if (output_vocab_size > 0) {
             if (output_vocab.size() != output_vocab_size) {
-                cerr << "Error: size of output_vocabulary file " << output_vocab.size() << " != --output_vocab_size " << output_vocab_size << endl;
+                cerr << "Error: size of output_vocabulary file " << output_vocab.size() << " != --output_vocab_size " << output_vocab_size << '\n';
             }
         }
         // else, set it to the size of vocabulary read from file
@@ -232,32 +232,32 @@ int main(int argc, char *argv[])
 
         output_vocab.insert_most_frequent(count, output_vocab_size);
         if (output_vocab.size() < output_vocab_size) {
-            cerr << "warning: fewer than " << output_vocab_size << " types in training data; the unknown word will not be learned" << endl;
+            cerr << "warning: fewer than " << output_vocab_size << " types in training data; the unknown word will not be learned\n";
         }
     }
 
     // write input vocabulary to file
     if (write_input_words_file != "") {
-        cerr << "Writing vocabulary to " << write_input_words_file << endl;
+        cerr << "Writing vocabulary to " << write_input_words_file << '\n';
         writeWordsFile(input_vocab.words(), write_input_words_file);
     }
 
     // write output vocabulary to file
     if (write_output_words_file != "") {
-        cerr << "Writing vocabulary to " << write_output_words_file << endl;
+        cerr << "Writing vocabulary to " << write_output_words_file << '\n';
         writeWordsFile(output_vocab.words(), write_output_words_file);
     }
 
     // Write out input and output numberized n-grams
     if (train_file != "")
     {
-        cerr << "Writing training data to " << train_file << endl;
+        cerr << "Writing training data to " << train_file << '\n';
         writeNgrams(train_data, source_context_size, target_context_size, input_vocab, source_unk, output_vocab, numberize, train_file);
 
     }
     if (validation_file != "")
     {
-        cerr << "Writing validation data to " << validation_file << endl;
+        cerr << "Writing validation data to " << validation_file << '\n';
         writeNgrams(validation_data, source_context_size, target_context_size, input_vocab, source_unk, output_vocab, numberize, validation_file);
     }
 }

@@ -63,7 +63,7 @@ void writeMmap(const string &filename_input,
 
     vec *mMapVec= mfile.construct<vec>("vector")(num_tokens*ngram_size,0,ialloc);
 
-    std::cerr<<"The size of mmaped vec is "<<mMapVec->size() << std::endl;
+    std::cerr<<"The size of mmaped vec is "<<mMapVec->size() << '\n';
 
   ifstream training(filename_input.c_str());
   data_size_t i = 0;
@@ -78,7 +78,7 @@ void writeMmap(const string &filename_input,
     splitBySpace(line, ngram);
     if (ngram.size() != ngram_size)
     {
-        std::cerr << "Error: expected " << ngram_size << " fields in instance, found " << ngram.size() << std::endl;
+        std::cerr << "Error: expected " << ngram_size << " fields in instance, found " << ngram.size() << '\n';
         std::exit(-1);
     }
 
@@ -117,25 +117,25 @@ int main(int argc, char *argv[])
     input_file = arg_input_file.getValue();
     output_file = arg_output_file.getValue();
 
-    std::cerr << "Command line: " << std::endl;
-    std::cerr << boost::algorithm::join(std::vector<std::string>(argv, argv+argc), " ") << std::endl;
+    std::cerr << "Command line: \n";
+    std::cerr << boost::algorithm::join(std::vector<std::string>(argv, argv+argc), " ") << '\n';
 
     const std::string sep(" Value: ");
-    std::cerr << arg_input_file.getDescription() << sep << arg_input_file.getValue() << std::endl;
-    std::cerr << arg_output_file.getDescription() << sep << arg_output_file.getValue() << std::endl;
+    std::cerr << arg_input_file.getDescription() << sep << arg_input_file.getValue() << '\n';
+    std::cerr << arg_output_file.getDescription() << sep << arg_output_file.getValue() << '\n';
   }
   catch (TCLAP::ArgException &e)
   {
-    std::cerr << "error: " << e.error() <<  " for arg " << e.argId() << std::endl;
+    std::cerr << "error: " << e.error() <<  " for arg " << e.argId() << '\n';
     std::exit(1);
   }
 
-  std::cerr << "counting number of lines:" << std::endl;
+  std::cerr << "counting number of lines:\n";
   ngram_size = getNgramSize(input_file);
   num_tokens = getNumLines(input_file);
-  std::cerr << std::endl;
-  std::cerr << "writing mmap file:" << std::endl;
+  std::cerr << '\n';
+  std::cerr << "writing mmap file:\n";
   writeMmap(input_file, output_file, ngram_size, num_tokens);
-  std::cerr << std::endl;
+  std::cerr << '\n';
 
 }

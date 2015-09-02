@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <boost/lexical_cast.hpp>
+#include <cctype>
 
 #include "model.h"
 #include "param.h"
@@ -124,12 +125,12 @@ void model::readConfig(istream &config_file)
       int version = lexical_cast<int>(fields[1]);
       if (version != 1)
       {
-        cerr << "error: file format mismatch (expected 1, found " << version << ")" << endl;
+        cerr << "error: file format mismatch (expected 1, found " << version << ")\n";
         exit(1);
       }
     }
     else
-      cerr << "warning: unrecognized field in config: " << fields[0] << endl;
+      cerr << "warning: unrecognized field in config: " << fields[0] << '\n';
   }
   resize(ngram_size,
          input_vocab_size,
@@ -145,7 +146,7 @@ void model::readConfig(const string &filename)
   ifstream config_file(filename.c_str());
   if (!config_file)
   {
-    cerr << "error: could not open config file " << filename << endl;
+    cerr << "error: could not open config file " << filename << '\n';
     exit(1);
   }
   readConfig(config_file);
@@ -158,11 +159,26 @@ void model::read(const string &filename)
   read(filename, input_words, output_words);
 }
 
-void model::read(const string &filename, vector<string> &words)
+void model::read(std::istream &file, std::ostream *log)
+{
+  vector<string> input_words;
+  vector<string> output_words;
+  read(file, input_words, output_words, log);
+}
+
+
+void model::read(const string &filename, std::vector<std::string> &input_words)
 {
   vector<string> output_words;
-  read(filename, words, output_words);
+  read(filename, input_words, output_words);
 }
+
+void model::read(std::istream &file, std::vector<std::string> &input_words, std::ostream *log)
+{
+  vector<string> output_words;
+  read(file, input_words, output_words, log);
+}
+
 
 void model::read(const string &filename, vector<string> &input_words, vector<string> &output_words)
 {
@@ -171,64 +187,99 @@ void model::read(const string &filename, vector<string> &input_words, vector<str
   read(file);
 }
 
-void model::read(std::istream &file, vector<string> &input_words, vector<string> &output_words)
-{
 
-  param myParam;
-  string line;
 
-  while (getline(file, line))
-  {
-    if (line == "\\config")
-    {
-      readConfig(file);
-    }
 
-    else if (line == "\\vocab")
-    {
-      input_words.clear();
-      readWordsFile(file, input_words);
-      output_words = input_words;
-    }
-
-    else if (line == "\\input_vocab")
-    {
-      input_words.clear();
-      readWordsFile(file, input_words);
-    }
-
-    else if (line == "\\output_vocab")
-    {
-      output_words.clear();
-      readWordsFile(file, output_words);
-    }
-
-    else if (line == "\\input_embeddings")
-      input_layer.read(file);
-    else if (line == "\\hidden_weights 1")
-      first_hidden_linear.read_weights(file);
-    else if (line == "\\hidden_biases 1")
-      first_hidden_linear.read_biases (file);
-    else if (line == "\\hidden_weights 2")
-      second_hidden_linear.read_weights(file);
-    else if (line == "\\hidden_biases 2")
-      second_hidden_linear.read_biases (file);
-    else if (line == "\\output_weights")
-      output_layer.read_weights(file);
-    else if (line == "\\output_biases")
-      output_layer.read_biases(file);
-    else if (line == "\\end")
-      break;
-    else if (line == "")
-      continue;
-    else
-    {
-      cerr << "warning: unrecognized section: " << line << endl;
-      // skip over section
-      while (getline(file, line) && line != "") { }
-    }
+/**
+   \return maximum iter on [begin, end) with pred(*iter)==true, else return end. this is like find_if
+   (c.rbegin(), c.rend(), pred)+1).base() except you get end rather than begin if not found.
+*/
+template <class Iter, class Pred>
+inline Iter findLast(Iter begin, Iter const& end, Pred pred) {
+  Iter i = end;
+  while (i > begin) {
+    --i;
+    if (pred(*i)) return i;
   }
+  return end;
 }
+
+struct NotSpace {
+  typedef bool result_type;
+  bool operator()(char c) const {
+#ifdef _WIN32
+    return (c & 0x80) || !std::isspace(c);
+#else
+    return !std::isspace(c);
+#endif
+  }
+};
+
+static inline std::string& rightTrim(std::string& s) {
+  std::string::iterator end = s.end();
+  std::string::iterator i = findLast(s.begin(), s.end(), NotSpace());
+  if (i == end)
+    s.clear();
+  else
+    s.erase(++i, end);
+  return s;
+}
+
+void model::read(std::istream &file, vector<string> &input_words, vector<string> &output_words, std::ostream *log)
+{
+    param myParam;
+    string line;
+
+    while (getline(file, line))
+    {
+      rightTrim(line);
+      string::size_type len = line.size();
+      if (!len) continue;
+      if (line[0] == '\\') {
+        if (log) *log << "reading section " << line << "\n";
+        if (line == "\\end")
+          break;
+        if (line == "\\config") {
+          readConfig(file);
+        } else if (line == "\\vocab") {
+          input_words.clear();
+          readWordsFile(file, input_words);
+          if (log) *log << "vocab: " << input_words.size() << " words\n";
+          output_words = input_words;
+        } else if (line == "\\input_vocab") {
+          input_words.clear();
+          readWordsFile(file, input_words);
+          if (log) *log << "input_vocab: " << input_words.size() << " words\n";
+        } else if (line == "\\output_vocab") {
+          output_words.clear();
+          readWordsFile(file, output_words);
+          if (log) *log << "output_vocab: " << output_words.size() << " words\n";
+        } else if (line == "\\input_embeddings")
+          input_layer.read(file);
+        else if (line == "\\hidden_weights 1")
+          first_hidden_linear.read_weights(file);
+        else if (line == "\\hidden_biases 1")
+          first_hidden_linear.read_biases(file);
+        else if (line == "\\hidden_weights 2")
+          second_hidden_linear.read_weights(file);
+        else if (line == "\\hidden_biases 2")
+          second_hidden_linear.read_biases(file);
+        else if (line == "\\output_weights")
+          output_layer.read_weights(file);
+        else if (line == "\\output_biases")
+          output_layer.read_biases(file);
+      } else {
+	    cerr << "warning: unrecognized section: " << line << '\n';
+	    if (log) *log << "warning: unrecognized section: " << line << '\n';
+	    // skip over section
+	    while (getline(file, line)) {
+          rightTrim(line);
+          if (line.empty()) break;
+        }
+      }
+    }
+}
+
 
 void model::write(const string &filename, const vector<string> &input_words, const vector<string> &output_words)
 {
@@ -250,60 +301,60 @@ void model::write(const string &filename, const vector<string> *input_pwords, co
   ofstream file(filename.c_str());
   if (!file) throw runtime_error("Could not open file " + filename);
 
-  file << "\\config" << endl;
-  file << "version 1" << endl;
-  file << "ngram_size " << ngram_size << endl;
-  file << "input_vocab_size " << input_vocab_size << endl;
-  file << "output_vocab_size " << output_vocab_size << endl;
-  file << "input_embedding_dimension " << input_embedding_dimension << endl;
-  file << "num_hidden " << num_hidden << endl;
-  file << "output_embedding_dimension " << output_embedding_dimension << endl;
-  file << "activation_function " << activation_function_to_string(activation_function) << endl;
-  file << endl;
+  file << "\\config\n";
+  file << "version 1\n";
+  file << "ngram_size " << ngram_size << '\n';
+  file << "input_vocab_size " << input_vocab_size << '\n';
+  file << "output_vocab_size " << output_vocab_size << '\n';
+  file << "input_embedding_dimension " << input_embedding_dimension << '\n';
+  file << "num_hidden " << num_hidden << '\n';
+  file << "output_embedding_dimension " << output_embedding_dimension << '\n';
+  file << "activation_function " << activation_function_to_string(activation_function) << '\n';
+  file << '\n';
 
   if (input_pwords)
   {
-    file << "\\input_vocab" << endl;
+    file << "\\input_vocab\n";
     writeWordsFile(*input_pwords, file);
-    file << endl;
+    file << '\n';
   }
 
   if (output_pwords)
   {
-    file << "\\output_vocab" << endl;
+    file << "\\output_vocab\n";
     writeWordsFile(*output_pwords, file);
-    file << endl;
+    file << '\n';
   }
 
-  file << "\\input_embeddings" << endl;
+  file << "\\input_embeddings\n";
   input_layer.write(file);
-  file << endl;
+  file << '\n';
 
-  file << "\\hidden_weights 1" << endl;
+  file << "\\hidden_weights 1\n";
   first_hidden_linear.write_weights(file);
-  file << endl;
+  file << '\n';
 
-  file << "\\hidden_biases 1" << endl;
+  file << "\\hidden_biases 1\n";
   first_hidden_linear.write_biases(file);
-  file <<endl;
+  file <<'\n';
 
-  file << "\\hidden_weights 2" << endl;
+  file << "\\hidden_weights 2\n";
   second_hidden_linear.write_weights(file);
-  file << endl;
+  file << '\n';
 
-  file << "\\hidden_biases 2" << endl;
+  file << "\\hidden_biases 2\n";
   second_hidden_linear.write_biases(file);
-  file << endl;
+  file << '\n';
 
-  file << "\\output_weights" << endl;
+  file << "\\output_weights\n";
   output_layer.write_weights(file);
-  file << endl;
+  file << '\n';
 
-  file << "\\output_biases" << endl;
+  file << "\\output_biases\n";
   output_layer.write_biases(file);
-  file << endl;
+  file << '\n';
 
-  file << "\\end" << endl;
+  file << "\\end\n";
 }
 
 

@@ -116,14 +116,14 @@ private:
       //assert (fabs(q[*s_it] - 1) < tol);
       if (std::fabs(q[*s_it] - 1) > tol)
       {
-	std::cerr << "warning: multinomial: probability differs from one by " << std::fabs(q[*s_it]-1) << std::endl;
+	std::cerr << "warning: multinomial: probability differs from one by " << std::fabs(q[*s_it]-1) << '\n';
       }
       q[*s_it] = 1.0;
     }
     for (l_it = L.begin(); l_it != L.end(); ++l_it) {
       if (std::fabs(q[*l_it] - 1) > tol)
       {
-	std::cerr << "warning: multinomial: probability differs from one by " << std::fabs(q[*l_it]-1) << std::endl;
+	std::cerr << "warning: multinomial: probability differs from one by " << std::fabs(q[*l_it]-1) << '\n';
       }
 	  q[*l_it] = 1.0;
     }

@@ -96,23 +96,23 @@ int main (int argc, char *argv[])
     myParam.minibatch_size = minibatch_size.getValue();
     myParam.num_threads = num_threads.getValue();
 
-    cerr << "Command line: " << endl;
-    cerr << boost::algorithm::join(vector<string>(argv, argv+argc), " ") << endl;
+    cerr << "Command line: \n";
+    cerr << boost::algorithm::join(vector<string>(argv, argv+argc), " ") << '\n';
 
     const string sep(" Value: ");
-    cerr << arg_test_file.getDescription() << sep << arg_test_file.getValue() << endl;
-    cerr << arg_model_file.getDescription() << sep << arg_model_file.getValue() << endl;
+    cerr << arg_test_file.getDescription() << sep << arg_test_file.getValue() << '\n';
+    cerr << arg_model_file.getDescription() << sep << arg_model_file.getValue() << '\n';
 
-    cerr << arg_normalization.getDescription() << sep << arg_normalization.getValue() << endl;
-    cerr << arg_ngramize.getDescription() << sep << arg_ngramize.getValue() << endl;
-    cerr << arg_add_start_stop.getDescription() << sep << arg_add_start_stop.getValue() << endl;
+    cerr << arg_normalization.getDescription() << sep << arg_normalization.getValue() << '\n';
+    cerr << arg_ngramize.getDescription() << sep << arg_ngramize.getValue() << '\n';
+    cerr << arg_add_start_stop.getDescription() << sep << arg_add_start_stop.getValue() << '\n';
 
-    cerr << minibatch_size.getDescription() << sep << minibatch_size.getValue() << endl;
-    cerr << num_threads.getDescription() << sep << num_threads.getValue() << endl;
+    cerr << minibatch_size.getDescription() << sep << minibatch_size.getValue() << '\n';
+    cerr << num_threads.getDescription() << sep << num_threads.getValue() << '\n';
   }
   catch (TCLAP::ArgException &e)
   {
-    cerr << "error: " << e.error() <<  " for arg " << e.argId() << endl;
+    cerr << "error: " << e.error() <<  " for arg " << e.argId() << '\n';
     exit(1);
   }
 
@@ -135,7 +135,7 @@ int main (int argc, char *argv[])
   ifstream test_file(myParam.test_file.c_str());
   if (!test_file)
   {
-    cerr << "error: could not open " << myParam.test_file << endl;
+    cerr << "error: could not open " << myParam.test_file << '\n';
     exit(1);
   }
   string line;
@@ -174,7 +174,7 @@ int main (int argc, char *argv[])
   for (int i=0; i<sent_log_probs[0].size(); i++) {
     for (int t=0; t<num_threads; t++)
       cout << sent_log_probs[t][i] << "\t";
-    cout << endl;
+    cout << '\n';
     for (int t=0; t<num_threads; t++)
       log_likelihood[t] += sent_log_probs[t][i];
   }
@@ -182,12 +182,12 @@ int main (int argc, char *argv[])
   cerr << "Test log10-likelihood: ";
   for (int t=0; t<num_threads; t++)
     cerr << log_likelihood[t] << " ";
-  cerr << endl;
+  cerr << '\n';
 #ifdef USE_CHRONO
   cerr << "Propagation times:";
   for (int i=0; i<timer.size(); i++)
     cerr << " " << timer.get(i);
-  cerr << endl;
+  cerr << '\n';
 #endif
 
 }

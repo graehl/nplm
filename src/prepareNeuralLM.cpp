@@ -47,7 +47,7 @@ void writeNgrams(const T &data,
   ofstream file(filename.c_str());
   if (!file)
   {
-    cerr << "error: could not open " << filename << endl;
+    cerr << "error: could not open " << filename << '\n';
     exit(1);
   }
 
@@ -62,7 +62,7 @@ void writeNgrams(const T &data,
       {
         file << ngrams[j][k] << " ";
       }
-      file << endl;
+      file << '\n';
     }
   }
   file.close();
@@ -85,7 +85,7 @@ void writeNgrams(const string &input_filename,
   ofstream output_sent_weights_file(sent_weights_filename.c_str());
   if (!file)
   {
-    cerr << "error: could not open " << filename << endl;
+    cerr << "error: could not open " << filename << '\n';
     exit(1);
   }
 
@@ -117,16 +117,16 @@ void writeNgrams(const string &input_filename,
     for (int j=0; j<ngrams.size(); j++)
     {
       if (sent_weights.size() != 0) {
-        output_sent_weights_file <<sent_weights[counter-1]<<endl;
+        output_sent_weights_file <<sent_weights[counter-1]<<'\n';
       }
       for (int k=0; k<ngram_size; k++)
       {
         file << ngrams[j][k] << " ";
       }
-      file << endl;
+      file << '\n';
     }
   }
-  cerr<<endl;
+  cerr<<'\n';
   input_file.close();
   file.close();
   output_sent_weights_file.close();
@@ -145,8 +145,8 @@ void writeMmapNgrams(const string &input_filename,
                      data_size_t num_tokens,
                      bool randomize)
 {
-  cerr<<"Num tokens is "<<num_tokens<<endl;
-  cerr<<"Training data size is "<<train_data_size<<endl;
+  cerr<<"Num tokens is "<<num_tokens<<'\n';
+  cerr<<"Training data size is "<<train_data_size<<'\n';
   // Open the memory mapped file and create the allocators
   ip::managed_mapped_file mfile(ip::create_only,
                                 filename.c_str(),
@@ -157,7 +157,7 @@ void writeMmapNgrams(const string &input_filename,
 
   vec *mMapVec= mfile.construct<vec>("vector")(num_tokens*ngram_size,0,ialloc);
 
-  cerr<<"The size of mmaped vec is "<<mMapVec->size()<<endl;
+  cerr<<"The size of mmaped vec is "<<mMapVec->size()<<'\n';
   // Going over every line in the input file and
   // printing the memory mapped ngrams into the
   // output file
@@ -171,7 +171,7 @@ void writeMmapNgrams(const string &input_filename,
   while (getline(input_file,line) && train_data_size-- > 0) {
     counter++;
     if ((counter % 100000) ==0) {
-      //cerr<<"counter is "<<counter<<endl;
+      //cerr<<"counter is "<<counter<<'\n';
       cerr<<counter<<" training lines ... ";
     }
     //stringstream lstr(line);
@@ -186,12 +186,12 @@ void writeMmapNgrams(const string &input_filename,
                     add_start_stop,
                     ngramize);
     /*
-      cerr<<"line is "<<endl;
-      cerr<<line<<endl;
-      cerr<<"Number of ngrams is "<<ngrams.size()<<endl;
+      cerr<<"line is \n";
+      cerr<<line<<'\n';
+      cerr<<"Number of ngrams is "<<ngrams.size()<<'\n';
       if (ngrams.size() ==1 ){
-      cerr<<"The line number was "<<counter<<endl;
-      cerr<<line<<endl;
+      cerr<<"The line number was "<<counter<<'\n';
+      cerr<<line<<'\n';
       }
     */
     // write out n-grams in mmapped file
@@ -202,16 +202,16 @@ void writeMmapNgrams(const string &input_filename,
         {
         cerr << ngrams[j][k] << " ";
         }
-        cerr<< endl;
+        cerr<< '\n';
       */
       for (int k=0; k<ngram_size; k++) {
         mMapVec->at(train_ngram_counter*ngram_size+k) = ngrams[j][k];
       }
       train_ngram_counter++;
-      //cerr<<"Train ngram counter is "<<train_ngram_counter<<endl;
+      //cerr<<"Train ngram counter is "<<train_ngram_counter<<'\n';
     }
   }
-  cerr<<endl;
+  cerr<<'\n';
   input_file.close();
 
   // Shrink the file if it was overused
@@ -272,7 +272,7 @@ void writeMmapNgrams(const string &input_filename,
       }
       }
     */
-    cerr<<endl;
+    cerr<<'\n';
   }
 }
 
@@ -361,28 +361,28 @@ int main(int argc, char *argv[])
     // - if neither --validation_file or --validation_size is set, validation will not be performed.
     // - if --numberize 0 is set, then --validation_size cannot be used.
 
-    cerr << "Command line: " << endl;
-    cerr << boost::algorithm::join(vector<string>(argv, argv+argc), " ") << endl;
+    cerr << "Command line: \n";
+    cerr << boost::algorithm::join(vector<string>(argv, argv+argc), " ") << '\n';
 
     const string sep(" Value: ");
-    cerr << arg_train_text.getDescription() << sep << arg_train_text.getValue() << endl;
-    cerr << arg_train_file.getDescription() << sep << arg_train_file.getValue() << endl;
-    cerr << arg_validation_text.getDescription() << sep << arg_validation_text.getValue() << endl;
-    cerr << arg_validation_file.getDescription() << sep << arg_validation_file.getValue() << endl;
-    cerr << arg_validation_size.getDescription() << sep << arg_validation_size.getValue() << endl;
-    cerr << arg_write_words_file.getDescription() << sep << arg_write_words_file.getValue() << endl;
-    cerr << arg_ngram_size.getDescription() << sep << arg_ngram_size.getValue() << endl;
-    cerr << arg_vocab_size.getDescription() << sep << arg_vocab_size.getValue() << endl;
-    cerr << arg_words_file.getDescription() << sep << arg_words_file.getValue() << endl;
-    cerr << arg_numberize.getDescription() << sep << arg_numberize.getValue() << endl;
-    cerr << arg_ngramize.getDescription() << sep << arg_ngramize.getValue() << endl;
-    cerr << arg_add_start_stop.getDescription() << sep << arg_add_start_stop.getValue() << endl;
-    cerr << arg_mmap_file.getDescription() << sep << arg_mmap_file.getValue() << endl;
-    //cerr << arg_sent_weights_text.getDescription() << sep << arg_sent_weights_text.getValue() << endl;
+    cerr << arg_train_text.getDescription() << sep << arg_train_text.getValue() << '\n';
+    cerr << arg_train_file.getDescription() << sep << arg_train_file.getValue() << '\n';
+    cerr << arg_validation_text.getDescription() << sep << arg_validation_text.getValue() << '\n';
+    cerr << arg_validation_file.getDescription() << sep << arg_validation_file.getValue() << '\n';
+    cerr << arg_validation_size.getDescription() << sep << arg_validation_size.getValue() << '\n';
+    cerr << arg_write_words_file.getDescription() << sep << arg_write_words_file.getValue() << '\n';
+    cerr << arg_ngram_size.getDescription() << sep << arg_ngram_size.getValue() << '\n';
+    cerr << arg_vocab_size.getDescription() << sep << arg_vocab_size.getValue() << '\n';
+    cerr << arg_words_file.getDescription() << sep << arg_words_file.getValue() << '\n';
+    cerr << arg_numberize.getDescription() << sep << arg_numberize.getValue() << '\n';
+    cerr << arg_ngramize.getDescription() << sep << arg_ngramize.getValue() << '\n';
+    cerr << arg_add_start_stop.getDescription() << sep << arg_add_start_stop.getValue() << '\n';
+    cerr << arg_mmap_file.getDescription() << sep << arg_mmap_file.getValue() << '\n';
+    //cerr << arg_sent_weights_text.getDescription() << sep << arg_sent_weights_text.getValue() << '\n';
   }
   catch (TCLAP::ArgException &e)
   {
-    cerr << "error: " << e.error() <<  " for arg " << e.argId() << endl;
+    cerr << "error: " << e.error() <<  " for arg " << e.argId() << '\n';
     exit(1);
   }
 
@@ -391,7 +391,7 @@ int main(int argc, char *argv[])
   // If the vocabulary is preset, we can't create the validation data.
   // - if --numberize 0 is set, then --validation_size cannot be used.
   // if (!numberize && (validation_size > 0)) {
-  //     cerr <<  "Warning: without setting --numberize to 1, --validation_size cannot be used." << endl;
+  //     cerr <<  "Warning: without setting --numberize to 1, --validation_size cannot be used.\n";
   // }
 
   // Read in training data and validation data
@@ -416,11 +416,11 @@ int main(int argc, char *argv[])
     vocab.insert_word("<null>");
     // warn user that if --numberize is not set, there will be no vocabulary!
     if (!numberize) {
-      cerr << "Warning: with --numberize 0 and --words_file == "", there will be no vocabulary!" << endl;
+      cerr << "Warning: with --numberize 0 and --words_file == "", there will be no vocabulary!\n";
     }
   }
   if (mmap_file == false && randomize == true) {
-    cerr<<"Randomize option can only be used with mmap_file = 1"<<endl;
+    cerr<<"Randomize option can only be used with mmap_file = 1\n";
     exit(1);
   }
   unordered_map<string,int> count; // For keeping word counts if no supplied vocab
@@ -442,7 +442,7 @@ int main(int argc, char *argv[])
     if (!ngramize) {
       if (ngram_size > 0) {
         if (ngram_size != lstr_items.size()) {
-          cerr << "Error: size of training ngrams does not match specified value of --ngram_size!" << endl;
+          cerr << "Error: size of training ngrams does not match specified value of --ngram_size!\n";
         }
       }
       // else if --ngram_size has not been specified, set it now
@@ -456,9 +456,9 @@ int main(int argc, char *argv[])
     //break;
     /*
       if (lstr_items.size() ==1) {
-      cerr<<"line :"<<endl;
-      cerr<<line<<endl;
-      cerr<<"The number of items was 1"<<endl;
+      cerr<<"line :\n";
+      cerr<<line<<'\n';
+      cerr<<"The number of items was 1\n";
       getchar();
       }
     */
@@ -471,7 +471,7 @@ int main(int argc, char *argv[])
     // Add to validation set if the validation size
     // has not been specified
     if (validation_text == "" && validation_size > 0) {
-      //cerr<<"validation size is "<<validation_data.size()<<endl;
+      //cerr<<"validation size is "<<validation_data.size()<<'\n';
       if (validation_data.size() == validation_size) {
         //validation_data.erase(validation_data.begin());
         validation_data.pop_front();
@@ -479,18 +479,18 @@ int main(int argc, char *argv[])
       validation_data.push_back(lstr_items);
     }
   }
-  cerr<<endl;
+  cerr<<'\n';
   training.close();
-  //cerr<<"validation size is "<<validation_data.size()<<endl;
+  //cerr<<"validation size is "<<validation_data.size()<<'\n';
   //getchar();
   if (validation_data.size() < validation_size) {
-    cerr<<"validation size is "<<validation_data.size()<<endl;
-    cerr << "error: requested validation size is greater than training data size" << endl;
+    cerr<<"validation size is "<<validation_data.size()<<'\n';
+    cerr << "error: requested validation size is greater than training data size\n";
     exit(1);
   }
 
   train_data_size -= validation_size;
-  cerr<<"Training data size is "<<train_data_size<<endl;
+  cerr<<"Training data size is "<<train_data_size<<'\n';
 
   // The items in the validation data have already been counted
   // Decrementing the counts of those words before building the vocabulary
@@ -508,7 +508,7 @@ int main(int argc, char *argv[])
   if (words_file == "") {
     vocab.insert_most_frequent(count, vocab_size);
     if (vocab.size() < vocab_size) {
-      cerr << "warning: fewer than " << vocab_size << " types in training data; the unknown word will not be learned" << endl;
+      cerr << "warning: fewer than " << vocab_size << " types in training data; the unknown word will not be learned\n";
     }
   }
   //vector<vector<string> > validation_data;
@@ -520,7 +520,7 @@ int main(int argc, char *argv[])
         // if --ngram_size has been specified, check that it does not conflict with --ngram_size
         if (ngram_size > 0) {
           if (ngram_size != validation_data[i].size()) {
-            cerr << "Error: size of validation ngrams does not match specified value of --ngram_size!" << endl;
+            cerr << "Error: size of validation ngrams does not match specified value of --ngram_size!\n";
           }
         }
         // else if --ngram_size has not been specified, set it now
@@ -533,13 +533,13 @@ int main(int argc, char *argv[])
   //READING SENTENCE WEIGHTS IF THERE ARE ANY
   vector<float> sent_weights;
   if (sent_weights_text != "") {
-    cerr<<"Reading sentence weights from "<<sent_weights_text<<endl;
+    cerr<<"Reading sentence weights from "<<sent_weights_text<<'\n';
     ifstream sent_weights_file(sent_weights_text.c_str());
     string line;
     readWeightsFile(sent_weights_file,sent_weights);
     sent_weights_file.close();
     if (sent_weights_text.size() != train_data_size) {
-      cerr<<"The number of sentence weights does not match the number of training sentences"<<endl;
+      cerr<<"The number of sentence weights does not match the number of training sentences\n";
     }
   }
 
@@ -549,7 +549,7 @@ int main(int argc, char *argv[])
     // Create validation data
     if (validation_size > train_data.size())
     {
-    cerr << "error: requested validation size is greater than training data size" << endl;
+    cerr << "error: requested validation size is greater than training data size\n";
     exit(1);
     }
     validation_data.insert(validation_data.end(), train_data.end()-validation_size, train_data.end());
@@ -572,7 +572,7 @@ int main(int argc, char *argv[])
     // was vocab_size set? if so, verify that it does not conflict with size of vocabulary read from file
     if (vocab_size > 0) {
       if (vocab.size() != vocab_size) {
-        cerr << "Error: size of vocabulary file " << vocab.size() << " != --vocab_size " << vocab_size << endl;
+        cerr << "Error: size of vocabulary file " << vocab.size() << " != --vocab_size " << vocab_size << '\n';
       }
     }
     // else, set it to the size of vocabulary read from file
@@ -590,7 +590,7 @@ int main(int argc, char *argv[])
 
   // warn user that if --numberize is not set, there will be no vocabulary!
   if (!numberize) {
-  cerr << "Warning: with --numberize 0 and --words_file == "", there will be no vocabulary!" << endl;
+  cerr << "Warning: with --numberize 0 and --words_file == "", there will be no vocabulary!\n";
   }
   unordered_map<string,int> count;
   for (int i=0; i<train_data.size(); i++) {
@@ -601,21 +601,21 @@ int main(int argc, char *argv[])
 
   vocab.insert_most_frequent(count, vocab_size);
   if (vocab.size() < vocab_size) {
-  cerr << "warning: fewer than " << vocab_size << " types in training data; the unknown word will not be learned" << endl;
+  cerr << "warning: fewer than " << vocab_size << " types in training data; the unknown word will not be learned\n";
   }
   }
   */
 
   // write vocabulary to file
   if (write_words_file != "") {
-    cerr << "Writing vocabulary to " << write_words_file << endl;
+    cerr << "Writing vocabulary to " << write_words_file << '\n';
     writeWordsFile(vocab.words(), write_words_file);
   }
 
   // Write out numberized n-grams
   if (train_file != "")
   {
-    cerr << "Writing training data to " << train_file << endl;
+    cerr << "Writing training data to " << train_file << '\n';
     if (mmap_file == true) {
       writeMmapNgrams(train_text,
                       ngram_size,
@@ -642,7 +642,7 @@ int main(int argc, char *argv[])
   }
   if (validation_file != "")
   {
-    cerr << "Writing validation data to " << validation_file << endl;
+    cerr << "Writing validation data to " << validation_file << '\n';
     writeNgrams(validation_data,
                 ngram_size,
                 vocab,

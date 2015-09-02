@@ -95,8 +95,9 @@ public:
     void read(const std::string &filename);
     void read(const std::string &filename, std::vector<std::string> &words);
     void read(const std::string &filename, std::vector<std::string> &input_words, std::vector<std::string> &output_words);
-    void read(std::istream &file);
-    void read(std::istream &file, std::vector<std::string> &input_words, std::vector<std::string> &output_words);
+    void read(std::istream &file, std::ostream *log = 0);
+    void read(std::istream &file, std::vector<std::string> &words, std::ostream *log = 0);
+    void read(std::istream &file, std::vector<std::string> &input_words, std::vector<std::string> &output_words, std::ostream *log = 0);
     void write(const std::string &filename);
     void write(const std::string &filename, const std::vector<std::string> &words);
     void write(const std::string &filename, const std::vector<std::string> &input_words, const std::vector<std::string> &output_words);

@@ -46,18 +46,18 @@ int main (int argc, char *argv[])
       myParam.minibatch_size = minibatch_size.getValue();
       myParam.debug = debug.getValue();
 
-      cerr << "Command line: " << endl;
-      cerr << boost::algorithm::join(vector<string>(argv, argv+argc), " ") << endl;
+      cerr << "Command line: \n";
+      cerr << boost::algorithm::join(vector<string>(argv, argv+argc), " ") << '\n';
       
       const string sep(" Value: ");
-      cerr << arg_model_file.getDescription() << sep << arg_model_file.getValue() << endl;
-      cerr << arg_test_file.getDescription() << sep << arg_test_file.getValue() << endl;
+      cerr << arg_model_file.getDescription() << sep << arg_model_file.getValue() << '\n';
+      cerr << arg_test_file.getDescription() << sep << arg_test_file.getValue() << '\n';
     
-      cerr << num_threads.getDescription() << sep << num_threads.getValue() << endl;
+      cerr << num_threads.getDescription() << sep << num_threads.getValue() << '\n';
     }
     catch (TCLAP::ArgException &e)
     {
-      cerr << "error: " << e.error() <<  " for arg " << e.argId() << endl;
+      cerr << "error: " << e.error() <<  " for arg " << e.argId() << '\n';
       exit(1);
     }
 
@@ -80,7 +80,7 @@ int main (int argc, char *argv[])
     myParam.output_embedding_dimension = nn.output_embedding_dimension;
 
     if (myParam.premultiply) {
-      cerr << "Premultiplying hidden layer" << endl;
+      cerr << "Premultiplying hidden layer\n";
       nn.premultiply();
     }
 
@@ -89,14 +89,14 @@ int main (int argc, char *argv[])
     vector<int> test_data_flat;
     readDataFile(myParam.test_file, myParam.ngram_size, test_data_flat);
     int test_data_size = test_data_flat.size() / myParam.ngram_size;
-    cerr << "Number of test instances: " << test_data_size << endl;
+    cerr << "Number of test instances: " << test_data_size << '\n';
 
     Map< Matrix<int,Dynamic,Dynamic> > test_data(test_data_flat.data(), myParam.ngram_size, test_data_size);
     
     ///// Score test data
 
     int num_batches = (test_data_size-1)/myParam.minibatch_size + 1;
-    cerr<<"Number of test minibatches: "<<num_batches<<endl;
+    cerr<<"Number of test minibatches: "<<num_batches<<'\n';
 
     double log_likelihood = 0.0;
     
@@ -147,10 +147,10 @@ int main (int argc, char *argv[])
             if (myParam.debug > 1) {
               cerr << minibatch.block(0,i,myParam.ngram_size,1).transpose() << " ";
             }
-            cerr << output_probs(minibatch(myParam.ngram_size-1,i),i) << endl;
+            cerr << output_probs(minibatch(myParam.ngram_size-1,i),i) << '\n';
           }
         }
 	
     }	
-    cerr << "Test log-likelihood: " << log_likelihood << endl;
+    cerr << "Test log-likelihood: " << log_likelihood << '\n';
 }

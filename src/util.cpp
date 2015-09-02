@@ -27,7 +27,7 @@ namespace nplm
 void splitBySpace(const std::string &line, std::vector<std::string> &items)
 {
     string copy(line);
-    boost::trim_if(copy, boost::is_any_of(" \t"));
+    boost::trim_if(copy, boost::is_any_of(" \t\r"));
     if (copy == "")
     {
 	items.clear();
@@ -44,7 +44,7 @@ void readWeightsFile(istream &TRAININ, vector<float> &weights) {
     splitBySpace(line, items);
     if (items.size() != 1)
     {
-        cerr << "Error: weights file should have only one weight per line" << endl;
+        cerr << "Error: weights file should have only one weight per line\n";
         exit(-1);
     }
     weights.push_back(boost::lexical_cast<float>(items[0]));
@@ -60,7 +60,7 @@ void readWordsFile(istream &TRAININ, vector<string> &word_list)
     splitBySpace(line, words);
     if (words.size() != 1)
     {
-        cerr << "Error: vocabulary file must have only one word per line" << endl;
+        cerr << "Error: vocabulary file must have only one word per line\n";
         exit(-1);
     }
     word_list.push_back(words[0]);
@@ -69,12 +69,12 @@ void readWordsFile(istream &TRAININ, vector<string> &word_list)
 
 void readWordsFile(const string &file, vector<string> &word_list)
 {
-  cerr << "Reading word list from: " << file<< endl;
+  cerr << "Reading word list from: " << file<< '\n';
 
   ifstream TRAININ(file.c_str());
   if (! TRAININ)
   {
-    cerr << "Error: can't read word list from file " << file<< endl;
+    cerr << "Error: can't read word list from file " << file<< '\n';
     exit(-1);
   }
 
@@ -85,7 +85,7 @@ void writeWordsFile(const vector<string> &words, ofstream &file)
 {
     for (int i=0; i<words.size(); i++)
     {
-	file << words[i] << endl;
+	file << words[i] << '\n';
     }
 }
 
@@ -94,7 +94,7 @@ void writeWordsFile(const vector<string> &words, const string &filename)
     ofstream OUT(filename.c_str());
     if (! OUT)
     {
-      cerr << "Error: can't write to file " << filename << endl;
+      cerr << "Error: can't write to file " << filename << '\n';
       exit(-1);
     }
     writeWordsFile(words, OUT);
@@ -110,7 +110,7 @@ void readDataFile(const string &filename, int &ngram_size, vector<int> &data, in
   ifstream DATAIN(filename.c_str());
   if (!DATAIN)
   {
-    cerr << "Error: can't read data from file " << filename<< endl;
+    cerr << "Error: can't read data from file " << filename<< '\n';
     exit(-1);
   }
 
@@ -128,7 +128,7 @@ void readDataFile(const string &filename, int &ngram_size, vector<int> &data, in
 
     if (ngram.size() != ngram_size)
     {
-        cerr << "Error: expected " << ngram_size << " fields in instance, found " << ngram.size() << endl;
+        cerr << "Error: expected " << ngram_size << " fields in instance, found " << ngram.size() << '\n';
 	exit(-1);
     }
 
@@ -139,7 +139,7 @@ void readDataFile(const string &filename, int &ngram_size, vector<int> &data, in
     if (minibatch_size && n_lines % (minibatch_size * 10000) == 0)
       cerr << n_lines/minibatch_size << "...";
   }
-  cerr << "done." << endl;
+  cerr << "done.\n";
 }
 
 double logadd(double x, double y)
@@ -178,7 +178,7 @@ int setup_threads(int n_threads)
         omp_set_num_threads(n_threads);
     n_threads = omp_get_max_threads();
     if (n_threads > 1)
-        cerr << "Using " << n_threads << " threads" << endl;
+        cerr << "Using " << n_threads << " threads\n";
 
     Eigen::initParallel();
     Eigen::setNbThreads(n_threads);

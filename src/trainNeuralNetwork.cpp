@@ -86,8 +86,8 @@ void compute_validation_perplexity(int ngram_size, int output_vocab_size, int va
         log_likelihood += minibatch_log_likelihood;
     }
 
-    cerr << "Validation log-likelihood: "<< log_likelihood << endl;
-    cerr << "           perplexity:     "<< exp(-log_likelihood/validation_data_size) << endl;
+    cerr << "Validation log-likelihood: "<< log_likelihood << '\n';
+    cerr << "           perplexity:     "<< exp(-log_likelihood/validation_data_size) << '\n';
 
     // If the validation perplexity decreases, halve the learning rate.
     if (current_validation_ll != 0.0 && log_likelihood < current_validation_ll && myParam.parameter_update != "ADA")
@@ -224,88 +224,88 @@ int main(int argc, char** argv)
       myParam.normalization_init = normalization_init.getValue();
       myParam.parameter_update = parameter_update.getValue();
 
-      cerr << "Command line: " << endl;
-      cerr << boost::algorithm::join(vector<string>(argv, argv+argc), " ") << endl;
+      cerr << "Command line: \n";
+      cerr << boost::algorithm::join(vector<string>(argv, argv+argc), " ") << '\n';
 
       const string sep(" Value: ");
-      cerr << train_file.getDescription() << sep << train_file.getValue() << endl;
-      cerr << validation_file.getDescription() << sep << validation_file.getValue() << endl;
-      cerr << input_words_file.getDescription() << sep << input_words_file.getValue() << endl;
-      cerr << output_words_file.getDescription() << sep << output_words_file.getValue() << endl;
-      cerr << model_prefix.getDescription() << sep << model_prefix.getValue() << endl;
+      cerr << train_file.getDescription() << sep << train_file.getValue() << '\n';
+      cerr << validation_file.getDescription() << sep << validation_file.getValue() << '\n';
+      cerr << input_words_file.getDescription() << sep << input_words_file.getValue() << '\n';
+      cerr << output_words_file.getDescription() << sep << output_words_file.getValue() << '\n';
+      cerr << model_prefix.getDescription() << sep << model_prefix.getValue() << '\n';
 
-      cerr << ngram_size.getDescription() << sep << ngram_size.getValue() << endl;
-      cerr << input_vocab_size.getDescription() << sep << input_vocab_size.getValue() << endl;
-      cerr << output_vocab_size.getDescription() << sep << output_vocab_size.getValue() << endl;
-      cerr << mmap_file.getDescription() << sep << mmap_file.getValue() << endl;
+      cerr << ngram_size.getDescription() << sep << ngram_size.getValue() << '\n';
+      cerr << input_vocab_size.getDescription() << sep << input_vocab_size.getValue() << '\n';
+      cerr << output_vocab_size.getDescription() << sep << output_vocab_size.getValue() << '\n';
+      cerr << mmap_file.getDescription() << sep << mmap_file.getValue() << '\n';
 
       if (embedding_dimension.getValue() >= 0)
       {
-        cerr << embedding_dimension.getDescription() << sep << embedding_dimension.getValue() << endl;
+        cerr << embedding_dimension.getDescription() << sep << embedding_dimension.getValue() << '\n';
       }
       else
       {
-        cerr << input_embedding_dimension.getDescription() << sep << input_embedding_dimension.getValue() << endl;
-        cerr << output_embedding_dimension.getDescription() << sep << output_embedding_dimension.getValue() << endl;
+        cerr << input_embedding_dimension.getDescription() << sep << input_embedding_dimension.getValue() << '\n';
+        cerr << output_embedding_dimension.getDescription() << sep << output_embedding_dimension.getValue() << '\n';
       }
-      cerr << share_embeddings.getDescription() << sep << share_embeddings.getValue() << endl;
+      cerr << share_embeddings.getDescription() << sep << share_embeddings.getValue() << '\n';
       if (share_embeddings.getValue() && input_embedding_dimension.getValue() != output_embedding_dimension.getValue())
       {
-        cerr << "error: sharing input and output embeddings requires that input and output embeddings have same dimension" << endl;
+        cerr << "error: sharing input and output embeddings requires that input and output embeddings have same dimension\n";
         exit(1);
       }
 
-      cerr << num_hidden.getDescription() << sep << num_hidden.getValue() << endl;
+      cerr << num_hidden.getDescription() << sep << num_hidden.getValue() << '\n';
 
       if (string_to_activation_function(activation_function.getValue()) == InvalidFunction)
       {
-        cerr << "error: invalid activation function: " << activation_function.getValue() << endl;
+        cerr << "error: invalid activation function: " << activation_function.getValue() << '\n';
         exit(1);
       }
-      cerr << activation_function.getDescription() << sep << activation_function.getValue() << endl;
+      cerr << activation_function.getDescription() << sep << activation_function.getValue() << '\n';
 
       if (string_to_loss_function(loss_function.getValue()) == InvalidLoss)
       {
-        cerr << "error: invalid loss function: " << loss_function.getValue() << endl;
+        cerr << "error: invalid loss function: " << loss_function.getValue() << '\n';
         exit(1);
       }
-      cerr << loss_function.getDescription() << sep << loss_function.getValue() << endl;
+      cerr << loss_function.getDescription() << sep << loss_function.getValue() << '\n';
 
-      cerr << init_normal.getDescription() << sep << init_normal.getValue() << endl;
-      cerr << init_range.getDescription() << sep << init_range.getValue() << endl;
+      cerr << init_normal.getDescription() << sep << init_normal.getValue() << '\n';
+      cerr << init_range.getDescription() << sep << init_range.getValue() << '\n';
 
-      cerr << num_epochs.getDescription() << sep << num_epochs.getValue() << endl;
-      cerr << minibatch_size.getDescription() << sep << minibatch_size.getValue() << endl;
+      cerr << num_epochs.getDescription() << sep << num_epochs.getValue() << '\n';
+      cerr << minibatch_size.getDescription() << sep << minibatch_size.getValue() << '\n';
       if (myParam.validation_file != "") {
-       cerr << validation_minibatch_size.getDescription() << sep << validation_minibatch_size.getValue() << endl;
+       cerr << validation_minibatch_size.getDescription() << sep << validation_minibatch_size.getValue() << '\n';
       }
-      cerr << learning_rate.getDescription() << sep << learning_rate.getValue() << endl;
-      cerr << L2_reg.getDescription() << sep << L2_reg.getValue() << endl;
+      cerr << learning_rate.getDescription() << sep << learning_rate.getValue() << '\n';
+      cerr << L2_reg.getDescription() << sep << L2_reg.getValue() << '\n';
 
-      cerr << num_noise_samples.getDescription() << sep << num_noise_samples.getValue() << endl;
+      cerr << num_noise_samples.getDescription() << sep << num_noise_samples.getValue() << '\n';
 
-      cerr << normalization.getDescription() << sep << normalization.getValue() << endl;
+      cerr << normalization.getDescription() << sep << normalization.getValue() << '\n';
       if (myParam.normalization){
-        cerr << normalization_init.getDescription() << sep << normalization_init.getValue() << endl;
+        cerr << normalization_init.getDescription() << sep << normalization_init.getValue() << '\n';
       }
 
-      cerr << use_momentum.getDescription() << sep << use_momentum.getValue() << endl;
+      cerr << use_momentum.getDescription() << sep << use_momentum.getValue() << '\n';
       if (myParam.use_momentum)
       {
-        cerr << initial_momentum.getDescription() << sep << initial_momentum.getValue() << endl;
-        cerr << final_momentum.getDescription() << sep << final_momentum.getValue() << endl;
+        cerr << initial_momentum.getDescription() << sep << initial_momentum.getValue() << '\n';
+        cerr << final_momentum.getDescription() << sep << final_momentum.getValue() << '\n';
       }
 
-      cerr << num_threads.getDescription() << sep << num_threads.getValue() << endl;
+      cerr << num_threads.getDescription() << sep << num_threads.getValue() << '\n';
 
       if (unigram_probs_file.getValue() != "")
       {
-        cerr << "Note: --unigram_probs_file is deprecated and ignored." << endl;
+        cerr << "Note: --unigram_probs_file is deprecated and ignored.\n";
       }
     }
     catch (TCLAP::ArgException &e)
     {
-      cerr << "error: " << e.error() <<  " for arg " << e.argId() << endl;
+      cerr << "error: " << e.error() <<  " for arg " << e.argId() << '\n';
       exit(1);
     }
 
@@ -326,14 +326,14 @@ int main(int argc, char** argv)
     data_size_t training_data_size; //num_tokens;
     ip::managed_mapped_file mmap_file;
     if (use_mmap_file == false) {
-      cerr<<"Reading data from regular text file "<<endl;
+      cerr<<"Reading data from regular text file \n";
       readDataFile(myParam.train_file, myParam.ngram_size, training_data_flat, myParam.minibatch_size);
       training_data_size = training_data_flat.size()/myParam.ngram_size;
     } else {
-      cerr<<"Using mmaped file"<<endl;
+      cerr<<"Using mmaped file\n";
       mmap_file = ip::managed_mapped_file(ip::open_only,myParam.train_file.c_str());
       training_data_flat_mmap = mmap_file.find<vec>("vector").first;
-      cerr<<"Size of mmaped vector is "<<training_data_flat_mmap->size()<<endl;
+      cerr<<"Size of mmaped vector is "<<training_data_flat_mmap->size()<<'\n';
       training_data_size = training_data_flat_mmap->size()/myParam.ngram_size;
       //randomly shuffle the data for better learning. The shuffling will
       //be different for a standard stl vector
@@ -405,24 +405,24 @@ int main(int argc, char** argv)
           }
         }
         */
-      cerr<<endl;
+      cerr<<'\n';
       }
     }
-    //cerr<<"Num tokens "<<num_tokens<<endl;
+    //cerr<<"Num tokens "<<num_tokens<<'\n';
     //data_size_t training_data_size = num_tokens / myParam.ngram_size;
-    cerr << "Number of training instances: "<< training_data_size << endl;
+    cerr << "Number of training instances: "<< training_data_size << '\n';
 
     Matrix<int,Dynamic,Dynamic> training_data;
     //(training_data_flat.data(), myParam.ngram_size, training_data_size);
 
     #ifdef MAP
-    cerr<<"Setting up eigen map"<<endl;
+    cerr<<"Setting up eigen map\n";
     if (use_mmap_file == false) {
       training_data = Map< Matrix<int,Dynamic,Dynamic> >(training_data_flat.data(), myParam.ngram_size, training_data_size);
     } else {
       training_data = Map< Matrix<int,Dynamic,Dynamic> >(training_data_flat_mmap->data().get(), myParam.ngram_size, training_data_size);
     }
-    cerr<<"Created eigen map"<<endl;
+    cerr<<"Created eigen map\n";
     #else
     if (use_mmap_file == false) {
       training_data = Map< Matrix<int,Dynamic,Dynamic> >(training_data_flat.data(), myParam.ngram_size, training_data_size);
@@ -440,7 +440,7 @@ int main(int argc, char** argv)
         myParam.output_vocab_size = training_data.row(myParam.ngram_size-1).maxCoeff()+1;
     }
     if (use_mmap_file == false && randomize == true) {
-      cerr<<"Randomly shuffling data..."<<endl;
+      cerr<<"Randomly shuffling data...\n";
       // Randomly shuffle training data to improve learning
       for (data_size_t i=training_data_size-1; i>0; i--)
       {
@@ -457,7 +457,7 @@ int main(int argc, char** argv)
     {
       readDataFile(myParam.validation_file, myParam.ngram_size, validation_data_flat);
       validation_data_size = validation_data_flat.size() / myParam.ngram_size;
-      cerr << "Number of validation instances: " << validation_data_size << endl;
+      cerr << "Number of validation instances: " << validation_data_size << '\n';
     }
 
     Map< Matrix<int,Dynamic,Dynamic> > validation_data(validation_data_flat.data(), myParam.ngram_size, validation_data_size);
@@ -489,10 +489,10 @@ int main(int argc, char** argv)
         if (use_mmap_file == false) {
           output_word = training_data(myParam.ngram_size-1, train_id);
         } else {
-        //cerr<<"mmap word is "<<training_data_flat_mmap->at((train_id+1)*myParam.ngram_size - 1)<<endl;
+        //cerr<<"mmap word is "<<training_data_flat_mmap->at((train_id+1)*myParam.ngram_size - 1)<<'\n';
           output_word = training_data_flat_mmap->at((train_id+1)*myParam.ngram_size - 1);
         }
-    //cerr<<"output word is "<<output_word<<endl;
+    //cerr<<"output word is "<<output_word<<'\n';
       unigram_counts[output_word] += 1;
     }
     multinomial<data_size_t> unigram (unigram_counts);
@@ -503,7 +503,7 @@ int main(int argc, char** argv)
     // LOAD THE NEURAL NETWORK MODEL
     if (myParam.model_file != ""){
       nn.read(myParam.model_file);
-      cerr<<"reading the model"<<endl;
+      cerr<<"reading the model\n";
     } else {
       nn.resize(myParam.ngram_size,
           myParam.input_vocab_size,
@@ -532,13 +532,13 @@ int main(int argc, char** argv)
     /////////////////////////////////////////////////////////////////////////////////////
 
     data_size_t num_batches = (training_data_size-1)/myParam.minibatch_size + 1;
-    cerr<<"Number of training minibatches: "<<num_batches<<endl;
+    cerr<<"Number of training minibatches: "<<num_batches<<'\n';
 
     int num_validation_batches = 0;
     if (validation_data_size > 0)
     {
         num_validation_batches = (validation_data_size-1)/myParam.validation_minibatch_size+1;
-  cerr<<"Number of validation minibatches: "<<num_validation_batches<<endl;
+  cerr<<"Number of validation minibatches: "<<num_validation_batches<<'\n';
     }
 
     double current_momentum = myParam.initial_momentum;
@@ -567,11 +567,11 @@ int main(int argc, char** argv)
 
     for (int epoch=0; epoch<myParam.num_epochs; epoch++)
     {
-        cerr << "Epoch " << epoch+1 << endl;
-        cerr << "Current learning rate: " << current_learning_rate << endl;
+        cerr << "Epoch " << epoch+1 << '\n';
+        cerr << "Current learning rate: " << current_learning_rate << '\n';
 
         if (myParam.use_momentum)
-      cerr << "Current momentum: " << current_momentum << endl;
+      cerr << "Current momentum: " << current_momentum << '\n';
   else
             current_momentum = -1;
 
@@ -599,9 +599,9 @@ int main(int argc, char** argv)
 
             if (batch > 0 && batch % 500000 == 0)
             {
-                cerr << endl;
+                cerr << '\n';
                 compute_validation_perplexity(ngram_size, output_vocab_size, validation_minibatch_size, validation_data_size, num_validation_batches, myParam, prop_validation, validation_data, current_learning_rate, current_validation_ll);
-                cerr << "Current learning rate: " << current_learning_rate << endl;
+                cerr << "Current learning rate: " << current_learning_rate << '\n';
             }
 
             data_size_t minibatch_start_index = minibatch_size * batch;
@@ -612,15 +612,15 @@ int main(int argc, char** argv)
       #else
       //ALTERNATIVE OPTION IF YOU'RE NOT USING eigen map interface on the mmapped file
       Matrix<int,Dynamic,Dynamic> minibatch;// = training_data.middleCols(minibatch_start_index, current_minibatch_size);
-    //cerr<<"Minibatch start index "<<minibatch_start_index<<endl;
-    //cerr<<"Minibatch size "<<current_minibatch_size<<endl;
+    //cerr<<"Minibatch start index "<<minibatch_start_index<<'\n';
+    //cerr<<"Minibatch size "<<current_minibatch_size<<'\n';
             if (use_mmap_file == true) {
             minibatch.setZero(ngram_size,current_minibatch_size);
             //now reading the ngrams from the mmaped file
               for (int k=0; k<ngram_size; k++){
                 for (data_size_t index = 0 ; index<current_minibatch_size; index++) {
           data_size_t current_index = index + minibatch_start_index;
-          //cerr<<"the value in the mmap file "<<index<<" "<<k<<" is "<<training_data_flat_mmap->at(current_index*ngram_size+k)<<endl;
+          //cerr<<"the value in the mmap file "<<index<<" "<<k<<" is "<<training_data_flat_mmap->at(current_index*ngram_size+k)<<'\n';
                   minibatch(k,index) = training_data_flat_mmap->at(current_index*ngram_size+k);
                 }
               }
@@ -629,12 +629,12 @@ int main(int argc, char** argv)
             }
       #endif
             double adjusted_learning_rate = current_learning_rate/minibatch_size;
-            //cerr<<"Adjusted learning rate: "<<adjusted_learning_rate<<endl;
+            //cerr<<"Adjusted learning rate: "<<adjusted_learning_rate<<'\n';
 
             /*
             if (batch == rand() % num_batches)
             {
-                cerr<<"we are checking the gradient in batch "<<batch<<endl;
+                cerr<<"we are checking the gradient in batch "<<batch<<'\n';
                 /////////////////////////CHECKING GRADIENTS////////////////////////////////////////
                 gradientChecking(myParam,minibatch_start_index,current_minibatch_size,word_nodes,context_nodes,hidden_layer_node,hidden_layer_to_output_node,
                               shuffled_training_data,c_h,unif_real_vector,eng_real_vector,unif_int_vector,eng_int_vector,unigram_probs_vector,
@@ -755,15 +755,15 @@ int main(int argc, char** argv)
              myParam.decay);
           }
       }
-  cerr << "done." << endl;
+  cerr << "done.\n";
 
   if (loss_function == LogLoss)
   {
-      cerr << "Training log-likelihood: " << log_likelihood << endl;
-            cerr << "         perplexity:     "<< exp(-log_likelihood/training_data_size) << endl;
+      cerr << "Training log-likelihood: " << log_likelihood << '\n';
+            cerr << "         perplexity:     "<< exp(-log_likelihood/training_data_size) << '\n';
   }
   else if (loss_function == NCELoss)
-      cerr << "Training NCE log-likelihood: " << log_likelihood << endl;
+      cerr << "Training NCE log-likelihood: " << log_likelihood << '\n';
 
         current_momentum += momentum_delta;
 
@@ -771,12 +771,12 @@ int main(int argc, char** argv)
   cerr << "Propagation times:";
   for (int i=0; i<timer.size(); i++)
     cerr << " " << timer.get(i);
-  cerr << endl;
+  cerr << '\n';
   #endif
 
   if (myParam.model_prefix != "")
   {
-      cerr << "Writing model" << endl;
+      cerr << "Writing model\n";
       if (myParam.input_words_file != "")
           nn.write(myParam.model_prefix + "." + lexical_cast<string>(epoch+1), input_words, output_words);
       else

@@ -80,7 +80,7 @@ class propagator {
     }
     first_hidden_activation_node.param->fProp(first_hidden_linear_node.fProp_matrix,
                                               first_hidden_activation_node.fProp_matrix);
-    //std::cerr<<"in fprop first hidden activation node fprop is "<<first_hidden_activation_node.fProp_matrix<<std::endl;
+    //std::cerr<<"in fprop first hidden activation node fprop is "<<first_hidden_activation_node.fProp_matrix<<'\n';
     //std::getchar();
     stop_timer(1);
 
@@ -127,7 +127,7 @@ class propagator {
                                                       output,
                                                       learning_rate);
     } else if (parameter_update == "ADAD") {
-      //std::cerr<<"Adadelta gradient"<<endl;
+      //std::cerr<<"Adadelta gradient\n";
       int current_minibatch_size = final_hidden_activation_node.fProp_matrix.cols();
       output_layer_node.param->computeGradientAdadelta(final_hidden_activation_node.fProp_matrix,
                                                        output,
@@ -135,7 +135,7 @@ class propagator {
                                                        conditioning_constant,
                                                        decay);
     } else {
-      std::cerr<<"Parameter update :"<<parameter_update<<" is unrecognized"<<std::endl;
+      std::cerr<<"Parameter update :"<<parameter_update<<" is unrecognized\n";
     }
     stop_timer(8);
 
@@ -185,7 +185,7 @@ class propagator {
                                                       learning_rate);
     } else if (parameter_update == "ADAD") {
       int current_minibatch_size = final_hidden_activation_node.fProp_matrix.cols();
-      //std::cerr<<"Adadelta gradient"<<endl;
+      //std::cerr<<"Adadelta gradient\n";
       output_layer_node.param->computeGradientAdadelta(final_hidden_activation_node.fProp_matrix,
                                                        samples,
                                                        weights,
@@ -193,7 +193,7 @@ class propagator {
                                                        conditioning_constant,
                                                        decay);
     } else {
-      std::cerr<<"Parameter update :"<<parameter_update<<" is unrecognized"<<std::endl;
+      std::cerr<<"Parameter update :"<<parameter_update<<" is unrecognized\n";
     }
 
     stop_timer(8);
@@ -258,7 +258,7 @@ class propagator {
                                             first_hidden_linear_node.bProp_matrix);
       stop_timer(11);
     }
-    //std::cerr<<"First hidden layer node backprop matrix is"<<first_hidden_linear_node.bProp_matrix<<std::endl;
+    //std::cerr<<"First hidden layer node backprop matrix is"<<first_hidden_linear_node.bProp_matrix<<'\n';
     //std::getchar();
     ////COMPUTE GRADIENT/////////
     if (parameter_update == "SGD") {
@@ -320,7 +320,7 @@ class propagator {
       stop_timer(13);
     } else if (parameter_update == "ADAD") {
       int current_minibatch_size = first_hidden_activation_node.fProp_matrix.cols();
-      //std::cerr<<"Adadelta gradient"<<endl;
+      //std::cerr<<"Adadelta gradient\n";
       if (!skip_hidden)
       {
         start_timer(10);
@@ -332,7 +332,7 @@ class propagator {
                                                                  decay);
         stop_timer(10);
       }
-      //std::cerr<<"Finished gradient for second hidden linear layer"<<std::endl;
+      //std::cerr<<"Finished gradient for second hidden linear layer\n";
 
       // First hidden layer
 
@@ -346,7 +346,7 @@ class propagator {
                                                               decay);
       stop_timer(12);
 
-      //std::cerr<<"Finished gradient for first hidden linear layer"<<std::endl;
+      //std::cerr<<"Finished gradient for first hidden linear layer\n";
       // Input word embeddings
 
       start_timer(13);
@@ -358,9 +358,9 @@ class propagator {
                                                       decay);
       stop_timer(13);
 
-      //std::cerr<<"Finished gradient for first input layer"<<std::endl;
+      //std::cerr<<"Finished gradient for first input layer\n";
     } else {
-      std::cerr<<"Parameter update :"<<parameter_update<<" is unrecognized"<<std::endl;
+      std::cerr<<"Parameter update :"<<parameter_update<<" is unrecognized\n";
     }
 
   }

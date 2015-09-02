@@ -171,9 +171,18 @@ class neuralNetwork
 
   int get_order() const { return m->ngram_size; }
 
-  void read(const std::string &filename)
+  void read(std::string const& filename, std::ostream *log = 0) {
+    std::ifstream file(filename.c_str());
+    if (!file) {
+      std::cerr << "error: could not open neuralLM file " << filename << '\n';
+      std::exit(1);
+    }
+    read(file, log);
+  }
+
+  void read(std::istream &file, std::ostream *log = 0)
   {
-    m->read(filename);
+    m->read(file, log);
     resize();
     // this is faster but takes more memory
     //m->premultiply();
