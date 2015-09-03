@@ -65,7 +65,7 @@ class Linear_layer
   void resize(int rows, int cols)
   {
     U.setZero(rows, cols);
-    U_gradient.setZero(rows, cols);
+    //U_gradient.setZero(rows, cols);
     //U_running_gradient.setZero(rows, cols);
     //U_running_parameter_updates.setZero(rows, cols);
     //U_velocity.setZero(rows, cols);
@@ -73,6 +73,11 @@ class Linear_layer
     //b_gradient.setZero(rows);
     //b_running_gradient.resize(rows);
     //b_velocity.resize(rows);
+  }
+
+  void setZeroGradients() {
+    U_gradient.setZero(U->rows(), U->cols());
+    b_gradient.setZero(b.size());
   }
 
   void read_weights(std::istream &U_file) { readMatrix(U_file, U); }
@@ -88,6 +93,7 @@ class Linear_layer
                   string &parameter_update,
                   double adagrad_epsilon)
   {
+    setZeroGradients();
     if (parameter_update == "ADA") {
       U_running_gradient = Matrix<double,Dynamic,Dynamic>::Ones(U.rows(),U.cols())*adagrad_epsilon;
       b_running_gradient = Matrix<double,Dynamic,1>::Ones(b.size())*adagrad_epsilon;
@@ -457,8 +463,7 @@ class Output_word_embeddings
     // b is vocab_size x 1
     // predicted_embeddings is output_embedding_dimension x minibatch_size
     // bProp_input is vocab_size x minibatch_sizea
-    W_gradient.setZero(W->rows(), W->cols());
-    b_gradient.setZero(b.size());
+    setZeroGradients();
     W_gradient.noalias() = bProp_input * predicted_embeddings.transpose();
     b_gradient.noalias() = bProp_input.rowwise().sum();
     W_running_gradient += W_gradient.array().square().matrix();
@@ -470,6 +475,11 @@ class Output_word_embeddings
     *W += (learning_rate * (W_gradient.array()/W_running_gradient.array().sqrt())).unaryExpr(Clipper()).matrix();
     b += (learning_rate * (b_gradient.array()/b_running_gradient.array().sqrt())).unaryExpr(Clipper()).matrix();
     */
+  }
+
+  void setZeroGradients() {
+    W_gradient.setZero(W->rows(), W->cols());
+    b_gradient.setZero(b.size());
   }
 
   template <typename DerivedIn, typename DerivedGOut>
@@ -485,8 +495,8 @@ class Output_word_embeddings
     // bProp_input is vocab_size x minibatch_size
     Array<double,Dynamic,Dynamic> W_current_parameter_update;
     Array<double,Dynamic,1> b_current_parameter_update;
-    W_gradient.setZero(W->rows(), W->cols());
-    b_gradient.setZero(b.size());
+    setZeroGradients();
+
     W_gradient.noalias() = bProp_input * predicted_embeddings.transpose();
     b_gradient.noalias() = bProp_input.rowwise().sum();
     W_running_gradient = decay*W_running_gradient +
