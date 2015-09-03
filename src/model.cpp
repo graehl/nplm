@@ -13,6 +13,41 @@ using namespace boost::random;
 namespace nplm
 {
 
+/**
+   \return maximum iter on [begin, end) with pred(*iter)==true, else return end. this is like find_if
+   (c.rbegin(), c.rend(), pred)+1).base() except you get end rather than begin if not found.
+*/
+template <class Iter, class Pred>
+inline Iter findLast(Iter begin, Iter const& end, Pred pred) {
+  Iter i = end;
+  while (i > begin) {
+    --i;
+    if (pred(*i)) return i;
+  }
+  return end;
+}
+
+struct NotSpace {
+  typedef bool result_type;
+  bool operator()(char c) const {
+#ifdef _WIN32
+    return (c & 0x80) || !std::isspace(c);
+#else
+    return !std::isspace(c);
+#endif
+  }
+};
+
+static inline std::string& rightTrim(std::string& s) {
+  std::string::iterator end = s.end();
+  std::string::iterator i = findLast(s.begin(), s.end(), NotSpace());
+  if (i == end)
+    s.clear();
+  else
+    s.erase(++i, end);
+  return s;
+}
+
 void model::resize(int ngram_size,
                    int input_vocab_size,
                    int output_vocab_size,
@@ -169,14 +204,14 @@ void model::read(std::istream &file, std::ostream *log)
 
 void model::read(const string &filename, std::vector<std::string> &input_words)
 {
-  vector<string> output_words;
-  read(filename, input_words, output_words);
+  ifstream file(filename.c_str());
+  if (!file) throw runtime_error("Could not open file " + filename);
+  read(file, input_words, NULL);
 }
 
 void model::read(std::istream &file, std::vector<std::string> &input_words, std::ostream *log)
 {
-  vector<string> output_words;
-  read(file, input_words, output_words, log);
+  read(file, input_words, NULL, log);
 }
 
 
@@ -184,48 +219,15 @@ void model::read(const string &filename, vector<string> &input_words, vector<str
 {
   ifstream file(filename.c_str());
   if (!file) throw runtime_error("Could not open file " + filename);
-  read(file);
-}
-
-
-
-
-/**
-   \return maximum iter on [begin, end) with pred(*iter)==true, else return end. this is like find_if
-   (c.rbegin(), c.rend(), pred)+1).base() except you get end rather than begin if not found.
-*/
-template <class Iter, class Pred>
-inline Iter findLast(Iter begin, Iter const& end, Pred pred) {
-  Iter i = end;
-  while (i > begin) {
-    --i;
-    if (pred(*i)) return i;
-  }
-  return end;
-}
-
-struct NotSpace {
-  typedef bool result_type;
-  bool operator()(char c) const {
-#ifdef _WIN32
-    return (c & 0x80) || !std::isspace(c);
-#else
-    return !std::isspace(c);
-#endif
-  }
-};
-
-static inline std::string& rightTrim(std::string& s) {
-  std::string::iterator end = s.end();
-  std::string::iterator i = findLast(s.begin(), s.end(), NotSpace());
-  if (i == end)
-    s.clear();
-  else
-    s.erase(++i, end);
-  return s;
+  read(file, input_words, output_words);
 }
 
 void model::read(std::istream &file, vector<string> &input_words, vector<string> &output_words, std::ostream *log)
+{
+  read(file, input_words, &output_words, log);
+}
+
+void model::read(std::istream &file, vector<string> &input_words, vector<string> *output_words, std::ostream *log)
 {
     param myParam;
     string line;
@@ -245,15 +247,20 @@ void model::read(std::istream &file, vector<string> &input_words, vector<string>
           input_words.clear();
           readWordsFile(file, input_words);
           if (log) *log << "vocab: " << input_words.size() << " words\n";
-          output_words = input_words;
+          if (output_words) *output_words = input_words;
         } else if (line == "\\input_vocab") {
           input_words.clear();
           readWordsFile(file, input_words);
           if (log) *log << "input_vocab: " << input_words.size() << " words\n";
         } else if (line == "\\output_vocab") {
-          output_words.clear();
-          readWordsFile(file, output_words);
-          if (log) *log << "output_vocab: " << output_words.size() << " words\n";
+          if (output_words) {
+            output_words->clear();
+            readWordsFile(file, *output_words);
+            if (log) *log << "output_vocab: " << output_words->size() << " words\n";
+          } else {
+            if (log) *log << "skipping unexpected output_vocab section (not expected for neuralLM)\n";
+            goto skip_section;
+          }
         } else if (line == "\\input_embeddings")
           input_layer.read(file);
         else if (line == "\\hidden_weights 1")
@@ -272,6 +279,7 @@ void model::read(std::istream &file, vector<string> &input_words, vector<string>
 	    cerr << "warning: unrecognized section: " << line << '\n';
 	    if (log) *log << "warning: unrecognized section: " << line << '\n';
 	    // skip over section
+     skip_section:
 	    while (getline(file, line)) {
           rightTrim(line);
           if (line.empty()) break;
