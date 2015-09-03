@@ -10,8 +10,11 @@
 #include "propagator.h"
 #include "neuralClasses.h"
 
+typedef Eigen::Matrix<int,Eigen::Dynamic,1> EigenNgram;
+
 namespace nplm
 {
+
 
 class neuralNetwork
 {
@@ -30,6 +33,7 @@ class neuralNetwork
   int cache_lookups, cache_hits;
 
  public:
+
   neuralNetwork()
       : m(new model()),
         normalization(false),
@@ -126,6 +130,24 @@ class neuralNetwork
     omp_set_num_threads(save_threads);
 
     return log_prob;
+  }
+
+  double lookup_ngram_start_null(const int *ngram_a, int n, int start, int null)
+  {
+    assert(n);
+    int sz = m->ngram_size;
+    EigenNgram ngram(sz);
+    int missing = sz - n;
+    int i = 0;
+    if (missing > 0) {
+      int fill = ngram_a[0] == start ? start : null;
+      for (; i < missing; ++i)
+        ngram(i) = fill;
+    } else
+      ngram_a -= missing;
+    for (;i < sz; ++i)
+      ngram(i) = *ngram_a++;
+    return neuralNetwork::lookup_ngram(ngram);
   }
 
   // Look up many n-grams in parallel.

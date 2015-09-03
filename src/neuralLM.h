@@ -82,22 +82,7 @@ class neuralLM : public neuralNetwork, graehl::replace_digits
 
   double lookup_ngram(const int *ngram_a, int n)
   {
-    Eigen::Matrix<int,Eigen::Dynamic,1> ngram(m->ngram_size);
-    for (int i=0; i<m->ngram_size; ++i)
-    {
-      if (i-m->ngram_size+n < 0)
-      {
-        if (ngram_a[0] == start)
-          ngram(i) = start;
-        else
-          ngram(i) = null;
-      }
-      else
-      {
-        ngram(i) = ngram_a[i-m->ngram_size+n];
-      }
-    }
-    return neuralNetwork::lookup_ngram(ngram);
+    return neuralNetwork::lookup_ngram_start_null(ngram_a, n, start, null);
   }
 
   double lookup_ngram(const std::vector<int> &ngram_v)
