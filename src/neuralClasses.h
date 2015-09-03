@@ -76,7 +76,7 @@ class Linear_layer
   }
 
   void setZeroGradients() {
-    U_gradient.setZero(U->rows(), U->cols());
+    U_gradient.setZero(U.rows(), U.cols());
     b_gradient.setZero(b.size());
   }
 
