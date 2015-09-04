@@ -135,9 +135,9 @@ class neuralNetwork
   double lookup_ngram_start_null(const int *ngram_a, int n, int start, int null)
   {
     assert(n);
-    int sz = m->ngram_size;
-    EigenNgram ngram(sz);
-    int missing = sz - n;
+    int want = m->ngram_size;
+    EigenNgram ngram(want);
+    int missing = want - n;
     int i = 0;
     if (missing > 0) {
       int fill = ngram_a[0] == start ? start : null;
@@ -145,7 +145,7 @@ class neuralNetwork
         ngram(i) = fill;
     } else
       ngram_a -= missing;
-    for (;i < sz; ++i)
+    for (; i < want; ++i)
       ngram(i) = *ngram_a++;
     return neuralNetwork::lookup_ngram(ngram);
   }
