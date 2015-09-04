@@ -28,8 +28,7 @@ class neuralLM : public neuralNetwork, graehl::replace_digits
 
  public:
   neuralLM()
-      : neuralNetwork(),
-        graehl::replace_digits(0),
+      : graehl::replace_digits(0),
         vocab(new vocabulary())
   {
   }

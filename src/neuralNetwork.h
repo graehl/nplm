@@ -20,7 +20,7 @@ class neuralNetwork
 {
  protected:
   boost::shared_ptr<model> m;
-
+  int ngram_size_;
  private:
   bool normalization;
   double weight;
@@ -36,6 +36,7 @@ class neuralNetwork
 
   neuralNetwork()
       : m(new model()),
+        ngram_size_(),
         normalization(false),
         weight(1.),
         prop(*m, 1),
@@ -48,9 +49,10 @@ class neuralNetwork
 
   // This must be called if the underlying model is resized.
   void resize() {
+    ngram_size_ = m->ngram_size;
     if (cache_size)
     {
-      cache_keys.resize(m->ngram_size, cache_size);
+      cache_keys.resize(ngram_size_, cache_size);
       cache_keys.fill(-1);
     }
     prop.resize();
@@ -64,8 +66,9 @@ class neuralNetwork
   template <typename Derived>
   double lookup_ngram(const Eigen::MatrixBase<Derived> &ngram)
   {
-    assert (ngram.rows() == m->ngram_size);
-    assert (ngram.cols() == 1);
+    assert(ngram_size_ == m->ngram_size);
+    assert(ngram.rows() == ngram_size_);
+    assert(ngram.cols() == 1);
 
     std::size_t hash;
     if (cache_size)
@@ -93,7 +96,7 @@ class neuralNetwork
 
     prop.fProp(ngram.col(0));
 
-    int output = ngram(m->ngram_size-1, 0);
+    int output = ngram(ngram_size_-1, 0);
     double log_prob;
 
     start_timer(3);
@@ -135,7 +138,8 @@ class neuralNetwork
   double lookup_ngram_start_null(const int *ngram_a, int n, int start, int null)
   {
     assert(n);
-    int want = m->ngram_size;
+    assert(ngram_size_ == m->ngram_size);
+    int want = ngram_size_;
     EigenNgram ngram(want);
     int missing = want - n;
     int i = 0;
@@ -155,8 +159,9 @@ class neuralNetwork
   void lookup_ngram(const Eigen::MatrixBase<DerivedA> &ngram, const Eigen::MatrixBase<DerivedB> &log_probs_const)
   {
     UNCONST(DerivedB, log_probs_const, log_probs);
-    assert (ngram.rows() == m->ngram_size);
-    //assert (ngram.cols() <= prop.get_minibatch_size());
+    assert(ngram_size_ == m->ngram_size);
+    assert(ngram.rows() == ngram_size_);
+    //assert(ngram.cols() <= prop.get_minibatch_size());
 
     prop.fProp(ngram);
 
@@ -171,10 +176,10 @@ class neuralNetwork
       // And softmax and loss
       Matrix<double,Dynamic,Dynamic> output_probs(m->output_vocab_size, ngram.cols());
       double minibatch_log_likelihood;
-      SoftmaxLogLoss().fProp(scores.leftCols(ngram.cols()), ngram.row(m->ngram_size-1), output_probs, minibatch_log_likelihood);
+      SoftmaxLogLoss().fProp(scores.leftCols(ngram.cols()), ngram.row(ngram_size_-1), output_probs, minibatch_log_likelihood);
       for (int j=0; j<ngram.cols(); j++)
       {
-        int output = ngram(m->ngram_size-1, j);
+        int output = ngram(ngram_size_-1, j);
         log_probs(0, j) = weight * output_probs(output, j);
       }
     }
@@ -182,7 +187,7 @@ class neuralNetwork
     {
       for (int j=0; j<ngram.cols(); j++)
       {
-        int output = ngram(m->ngram_size-1, j);
+        int output = ngram(ngram_size_-1, j);
         if (prop.skip_hidden)
           log_probs(0, j) = weight * prop.output_layer_node.param->fProp(prop.first_hidden_activation_node.fProp_matrix, output, j);
         else
@@ -191,7 +196,10 @@ class neuralNetwork
     }
   }
 
-  int get_order() const { return m->ngram_size; }
+  int get_order() const {
+    assert(ngram_size_ == m->ngram_size);
+    return ngram_size_;
+  }
 
   void read(std::string const& filename, std::ostream *log = 0) {
     std::ifstream file(filename.c_str());
@@ -212,8 +220,9 @@ class neuralNetwork
 
   void set_cache(std::size_t cache_size)
   {
+    assert(ngram_size_ == m->ngram_size);
     this->cache_size = cache_size;
-    cache_keys.resize(m->ngram_size, cache_size);
+    cache_keys.resize(ngram_size_, cache_size);
     cache_keys.fill(-1); // clears cache
     cache_values.resize(cache_size);
     cache_lookups = cache_hits = 0;

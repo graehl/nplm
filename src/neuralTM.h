@@ -23,8 +23,7 @@ class neuralTM : public neuralNetwork, graehl::replace_digits
 
  public:
   neuralTM()
-      : neuralNetwork(),
-        graehl::replace_digits(0),
+      : graehl::replace_digits(0),
         input_vocab(new vocabulary()),
         output_vocab(new vocabulary())
   {
@@ -115,12 +114,12 @@ class neuralTM : public neuralNetwork, graehl::replace_digits
 
   void read(const std::string &filename, std::ostream *log = 0)
   {
-      std::ifstream file(filename.c_str());
-      if (!file) {
-        std::cerr << "error: could not open neuralLM file " << filename << '\n';
-        std::exit(1);
-      }
-      read(file, log);
+    std::ifstream file(filename.c_str());
+    if (!file) {
+      std::cerr << "error: could not open neuralLM file " << filename << '\n';
+      std::exit(1);
+    }
+    read(file, log);
   }
 
   void read(std::istream &file, std::ostream *log = 0)
